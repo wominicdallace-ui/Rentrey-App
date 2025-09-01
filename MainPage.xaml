@@ -72,16 +72,7 @@
 
             </VerticalStackLayout>
         </ScrollView>
-
-        <!-- Bottom Navigation Bar (already completed) -->
-        <Frame Grid.Row="2" BackgroundColor="White" CornerRadius="20" Padding="10" Margin="10,0">
-            <HorizontalStackLayout HorizontalOptions="Center" Spacing="40">
-                <Image Source="house_icon.svg" HeightRequest="30" />
-                <Image Source="list_icon.svg" HeightRequest="30" />
-                <Image Source="search_icon_active.svg" HeightRequest="45" />
-                <Image Source="star_icon.svg" HeightRequest="30" />
-                <Image Source="profile_icon_inactive.svg" HeightRequest="30" />
-            </HorizontalStackLayout>
         </Frame>
     </Grid>
 </ContentPage>
+
