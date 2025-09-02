@@ -3,9 +3,9 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
 
-namespace Rentrey
+namespace Rentrey.Maui
 {
-    // progress bar
+    // A simple converter to handle the progress bar ratio
     public class RatioConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -23,7 +23,7 @@ namespace Rentrey
         }
     }
 
-    // data models
+    // Data models for the UI
     public class PointEntry
     {
         public int Points { get; set; }
@@ -54,16 +54,14 @@ namespace Rentrey
         {
             InitializeComponent();
 
-            Resources.Add("RatioConverter", new RatioConverter());
-
-            UserName = "User";
+            UserName = "Lachlan";
             Points = "790 / 1000 Points";
             LastUpdated = "Last Updated: 02/08/25";
             RankText = "Rank: Bronze";
             PointsAwayText = "210 points away from Silver!";
             ProgressRatio = 0.79; // 790/1000
 
-            // Initialise the collections
+            // Initialize the collections
             RecentPoints = new ObservableCollection<PointEntry>
             {
                 new PointEntry { Points = 10, Description = "You earned 10 points for on-time rent payment!" },
@@ -79,7 +77,6 @@ namespace Rentrey
                 new Badge { IconSource = "badge_new.png", Title = "New User", Description = "Joined the Rentrey community" }
             };
 
-            
             this.BindingContext = this;
         }
     }
