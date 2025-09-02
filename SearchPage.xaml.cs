@@ -3,13 +3,6 @@ using Microsoft.Maui.Controls;
 
 namespace Rentrey.Maui
 {
-    // A simple data model for the properties
-    public class Property
-    {
-        public string ImageSource { get; set; }
-        public string Details { get; set; }
-        public string Address { get; set; }
-    }
 
     public partial class SearchPage : ContentPage
     {
