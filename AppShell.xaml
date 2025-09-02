@@ -3,41 +3,40 @@
     x:Class="Rentrey.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:local="clr-namespace:Rentrey"
+    xmlns:local="clr-namespace:Rentrey.Maui"
     Shell.TabBarIsVisible="True">
 
     <TabBar Title="Home">
 
         <ShellContent
-            Title="Account"
-            ContentTemplate="{DataTemplate local:AccountPage}"
-            Route="AccountPage" 
-                    Icon="profile_nav.png"/> 
-
-        <ShellContent
-        Title="Payment"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="PaymentPage" 
+            Title="Home"
+            ContentTemplate="{DataTemplate local:HomePage}"
+            Route="HomePage"
             Icon="payment_nav.png"/>
 
         <ShellContent
+            Title="Account"
+            ContentTemplate="{DataTemplate local:AccountPage}"
+            Route="AccountPageTemp"
+            Icon="profile_nav.png"/>    
+
+        <ShellContent
             Title="Search"
-            ContentTemplate="{DataTemplate local:PropertyPage}"
-            Route="PropertyPage" 
-                    Icon="search_nav.png"/>     
+            ContentTemplate="{DataTemplate local:SearchPage}"
+            Route="SearchPage"
+            Icon="search_nav.png"/>
 
         <ShellContent
-        Title="Application"
-        ContentTemplate="{DataTemplate local:ApplicationPage}"
-        Route="ApplicationPage" 
-                Icon="application_nav.png"/>
-
+            Title="Application"
+            ContentTemplate="{DataTemplate local:ApplicationPage}"
+            Route="ApplicationPage"
+            Icon="application_nav.png"/>
 
         <ShellContent
-        Title="Ratings"
-        ContentTemplate="{DataTemplate local:RatingsPage}"
-        Route="RatingsPage" 
-                Icon="ratings_nav.png"/>
+            Title="Ratings"
+            ContentTemplate="{DataTemplate local:ApplicationPage}"
+            Route="RatingsPage"
+            Icon="ratings_nav.png"/>
 
     </TabBar>
 
