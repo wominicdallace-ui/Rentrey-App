@@ -1,4 +1,4 @@
-namespace Rentrey;
+namespace Rentrey.Maui;
 
 public partial class PaymentPage : ContentPage
 {
