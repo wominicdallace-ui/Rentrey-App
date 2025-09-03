@@ -12,14 +12,36 @@
 
                 <!-- Header Section -->
                 <Grid ColumnDefinitions="Auto,*,Auto" Margin="0,15,0,0">
-                    <Frame Grid.Column="0" CornerRadius="50" HeightRequest="60" WidthRequest="60" BorderColor="#FFD700" BackgroundColor="#FFF8DC" HorizontalOptions="Center" VerticalOptions="Center">
-                        <Image Source="profile_icon.png" HorizontalOptions="Center" VerticalOptions="Center" />
+                    <Frame Grid.Column="0" 
+                            CornerRadius="50" 
+                            HeightRequest="60" 
+                            WidthRequest="60" 
+                            BorderColor="#FFD700" 
+                            BackgroundColor="#FFF8DC" 
+                            HorizontalOptions="Center" 
+                            VerticalOptions="Center">
+                        <Image Source="profile_icon.png" 
+                                HorizontalOptions="Center" 
+                                VerticalOptions="Center" />
                     </Frame>
 
-                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="5" Margin="10,0,0,0">
-                        <Label Text="{Binding UserName}" FontSize="18" FontAttributes="Bold" TextColor="#333333"/>
-                        <Label Text="{Binding Points}" FontSize="20" FontAttributes="Bold" TextColor="#4CAF50"/>
-                        <BoxView HeightRequest="8" BackgroundColor="#D3D3D3" CornerRadius="4" HorizontalOptions="FillAndExpand">
+                    <VerticalStackLayout 
+                      Grid.Column="1" 
+                      VerticalOptions="Center" 
+                      Spacing="5" 
+                      Margin="10,0,0,0">
+                        <Label Text="{Binding UserName}" 
+                                FontSize="18" 
+                                FontAttributes="Bold" 
+                                TextColor="#333333"/>
+                        <Label Text="{Binding Points}" 
+                                FontSize="20" 
+                                FontAttributes="Bold" 
+                                TextColor="#4CAF50"/>
+                        <BoxView HeightRequest="8" 
+                                  BackgroundColor="#D3D3D3" 
+                                  CornerRadius="4" 
+                                  HorizontalOptions="FillAndExpand">
                             <BoxView.Background>
                                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
                                     <GradientStop Color="#4CAF50" Offset="{Binding ProgressRatio}" />
@@ -32,13 +54,23 @@
                 </Grid>
 
                 <!-- Recent Updates Section -->
-                <Label Text="Recent Updates" FontSize="20" FontAttributes="Bold" TextColor="#333333" Margin="0,15,0,0"/>
+                <Label Text="Recent Updates" 
+                        FontSize="20" 
+                        FontAttributes="Bold" 
+                        TextColor="#333333" 
+                        Margin="0,15,0,0"/>
                 <CollectionView ItemsSource="{Binding RecentUpdates}" HeightRequest="100">
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
-                            <Frame CornerRadius="10" Padding="10" BackgroundColor="White" Margin="0,5">
+                            <Frame CornerRadius="10" 
+                                    Padding="10" 
+                                    BackgroundColor="White" 
+                                    Margin="0,5">
                                 <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
-                                    <Image Source="{Binding IconSource}" HeightRequest="40" WidthRequest="40" VerticalOptions="Center" />
+                                    <Image Source="{Binding IconSource}" 
+                                            HeightRequest="40" 
+                                            WidthRequest="40" 
+                                            VerticalOptions="Center" />
                                     <VerticalStackLayout Spacing="2" VerticalOptions="Center">
                                         <Label Text="{Binding Title}" FontAttributes="Bold" TextColor="#333333" />
                                         <Label Text="{Binding Description}" TextColor="#888888" />
@@ -50,7 +82,11 @@
                 </CollectionView>
 
                 <!-- Newly Added Properties Section -->
-                <Label Text="Newly Added Properties" FontSize="20" FontAttributes="Bold" TextColor="#333333" Margin="0,15,0,0"/>
+                <Label Text="Newly Added Properties" 
+                        FontSize="20" 
+                        FontAttributes="Bold" 
+                        TextColor="#333333" 
+                        Margin="0,15,0,0"/>
                 <CollectionView ItemsSource="{Binding NewlyAddedProperties}" HeightRequest="250">
                     <CollectionView.ItemsLayout>
                         <LinearItemsLayout Orientation="Horizontal" ItemSpacing="15"/>
@@ -61,8 +97,15 @@
                                 <VerticalStackLayout>
                                     <Image Source="{Binding ImageSource}" Aspect="AspectFill" HeightRequest="180" />
                                     <VerticalStackLayout Padding="10">
-                                        <Label Text="{Binding Details}" HorizontalOptions="Start" FontSize="14" FontAttributes="Bold"/>
-                                        <Label Text="{Binding Address}" HorizontalOptions="Start" FontSize="16" FontAttributes="Bold" Margin="0,5,0,0" />
+                                        <Label Text="{Binding Details}" 
+                                                HorizontalOptions="Start" 
+                                                FontSize="14" 
+                                                FontAttributes="Bold"/>
+                                        <Label Text="{Binding Address}" 
+                                                HorizontalOptions="Start" 
+                                                FontSize="16" 
+                                                FontAttributes="Bold" 
+                                                Margin="0,5,0,0" />
                                     </VerticalStackLayout>
                                 </VerticalStackLayout>
                             </Frame>
@@ -74,4 +117,5 @@
         </ScrollView>
     </Grid>
 </ContentPage>
+
 
