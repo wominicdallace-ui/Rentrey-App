@@ -5,8 +5,30 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:Rentrey.Maui"
     Shell.TabBarIsVisible="True">
-
-    <TabBar Title="Home">
+    
+    <TabBar>
+        <Tab
+            Title="Home"
+            Icon="payment_nav.png"/>
+            <ShellContent ContentTemplate="{DataTemplate local:HomePage}"
+        </Tab>
+        <Tab  Title="Account"
+        Icon="profile_nav.png">
+            <ShellContent ContentTemplate="{DataTemplate local:AccountPage}"/>
+        </Tab>
+        <Tab  Title="Search"
+        Icon="search_nav.png">
+            <ShellContent ContentTemplate="{DataTemplate local:SearchPage}"/>
+        </Tab>
+        <Tab  Title="Application"
+        Icon="application_nav.png">
+            <ShellContent ContentTemplate="{DataTemplate local:ApplicationPage}"/>
+        </Tab>
+        <Tab  Title="Ratings"
+        Icon="ratings_nav.png">
+            <ShellContent ContentTemplate="{DataTemplate local:RatingsPage}"/>
+        </Tab>
+    </TabBar>
 
         <ShellContent
             Title="Home"
@@ -38,6 +60,5 @@
             Route="RatingsPage"
             Icon="ratings_nav.png"/>
 
-    </TabBar>
-
 </Shell>
+
