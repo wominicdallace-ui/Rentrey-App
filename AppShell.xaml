@@ -5,60 +5,59 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:Rentrey.Maui"
     Shell.TabBarIsVisible="True">
-    
+
     <TabBar>
         <Tab
             Title="Home"
-            Icon="payment_nav.png"/>
-            <ShellContent ContentTemplate="{DataTemplate local:HomePage}"
+            Icon="payment_nav.png">
+        <ShellContent ContentTemplate="{DataTemplate local:HomePage}"/>
         </Tab>
         <Tab  Title="Account"
-        Icon="profile_nav.png">
+            Icon="profile_nav.png">
             <ShellContent ContentTemplate="{DataTemplate local:AccountPage}"/>
         </Tab>
         <Tab  Title="Search"
-        Icon="search_nav.png">
+            Icon="search_nav.png">
             <ShellContent ContentTemplate="{DataTemplate local:SearchPage}"/>
-        </Tab>
+         </Tab>
         <Tab  Title="Application"
-        Icon="application_nav.png">
-            <ShellContent ContentTemplate="{DataTemplate local:ApplicationPage}"/>
-        </Tab>
+                 Icon="application_nav.png">
+                <ShellContent ContentTemplate="{DataTemplate local:ApplicationPage}"/>
+            </Tab>
         <Tab  Title="Ratings"
-        Icon="ratings_nav.png">
+            Icon="ratings_nav.png">
             <ShellContent ContentTemplate="{DataTemplate local:RatingsPage}"/>
-        </Tab>
+         </Tab>
     </TabBar>
 
-        <ShellContent
+    <ShellContent
             Title="Home"
             ContentTemplate="{DataTemplate local:HomePage}"
             Route="HomePage"
             Icon="payment_nav.png"/>
 
-        <ShellContent
+    <ShellContent
             Title="Account"
             ContentTemplate="{DataTemplate local:AccountPage}"
             Route="AccountPageTemp"
-            Icon="profile_nav.png"/>    
+            Icon="profile_nav.png"/>
 
-        <ShellContent
+    <ShellContent
             Title="Search"
             ContentTemplate="{DataTemplate local:SearchPage}"
             Route="SearchPage"
             Icon="search_nav.png"/>
 
-        <ShellContent
+    <ShellContent
             Title="Application"
             ContentTemplate="{DataTemplate local:ApplicationPage}"
             Route="ApplicationPage"
             Icon="application_nav.png"/>
 
-        <ShellContent
+    <ShellContent
             Title="Ratings"
             ContentTemplate="{DataTemplate local:ApplicationPage}"
             Route="RatingsPage"
             Icon="ratings_nav.png"/>
 
 </Shell>
-
