@@ -5,9 +5,9 @@
              x:Class="Rentrey.Maui.SearchPage"
              BackgroundColor="#F5F5F5"
              Title="Search">
-    
+
     <Grid RowDefinitions="Auto, *, Auto">
-        
+
         <!-- Search Bar Section -->
         <Frame Grid.Row="0" CornerRadius="10" Padding="5" Margin="15,15,15,5">
             <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
@@ -19,16 +19,16 @@
                 <Image Source="search_icon.svg" HeightRequest="25" VerticalOptions="Center"/>
             </HorizontalStackLayout>
         </Frame>
-        
+
         <!-- Map and Property Pins Section -->
         <VerticalStackLayout Grid.Row="1" Spacing="10">
             <Label Text="Find a Property on the Map" FontSize="20" FontAttributes="Bold" TextColor="#333333" Margin="15,10,15,0"/>
             <Frame CornerRadius="10" Padding="0" Margin="15,0,15,10" HeightRequest="250">
                 <!-- Map Placeholder -->
-                <Image Source="map_placeholder.png" Aspect="AspectFill" />
+                <Image Source="placeholdermap.png" Aspect="AspectFill" />
             </Frame>
         </VerticalStackLayout>
-        
+
         <!-- Newly Added Properties Section -->
         <VerticalStackLayout Grid.Row="2" Spacing="10">
             <Label Text="Newly Added Properties" FontSize="20" FontAttributes="Bold" TextColor="#333333" Margin="15,0"/>
@@ -39,6 +39,10 @@
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <Frame CornerRadius="10" Padding="0" WidthRequest="250">
+                            <Frame.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type local:SearchPage}}, Path=BindingContext.NavigateToPropertyCommand}"
+                                                      CommandParameter="{Binding .}" />
+                            </Frame.GestureRecognizers>
                             <VerticalStackLayout>
                                 <Image Source="{Binding ImageSource}" Aspect="AspectFill" HeightRequest="180" />
                                 <VerticalStackLayout Padding="10">
