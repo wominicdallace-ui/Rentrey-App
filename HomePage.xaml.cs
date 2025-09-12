@@ -7,6 +7,7 @@ using Microsoft.Maui.Storage;
 using System.IO;
 using System.Threading.Tasks;
 using Rentrey;
+using RentreyApp.Services;
 
 namespace Rentrey.Maui
 {
@@ -20,6 +21,8 @@ namespace Rentrey.Maui
 
     public partial class HomePage : ContentPage, INotifyPropertyChanged
     {
+        private readonly DatabaseService _databaseService;
+
         private string _profileImageSource;
         public string ProfileImageSource
         {
@@ -34,19 +37,33 @@ namespace Rentrey.Maui
             }
         }
 
+        private ObservableCollection<Property> _newlyAddedProperties;
+        public ObservableCollection<Property> NewlyAddedProperties
+        {
+            get => _newlyAddedProperties;
+            set
+            {
+                if (_newlyAddedProperties != value)
+                {
+                    _newlyAddedProperties = value;
+                    OnPropertyChanged(nameof(NewlyAddedProperties));
+                }
+            }
+        }
+
         public string UserName { get; set; }
         public string Points { get; set; }
         public double ProgressRatio { get; set; }
         public string LastUpdated { get; set; }
 
         public ObservableCollection<RecentUpdate> RecentUpdates { get; set; }
-        public ObservableCollection<Property> NewlyAddedProperties { get; set; }
 
         public ICommand NavigateToPropertyCommand { get; }
 
-        public HomePage()
+        public HomePage(DatabaseService databaseService)
         {
             InitializeComponent();
+            _databaseService = databaseService;
 
             // Set a default profile image
             ProfileImageSource = "profile_icon.png";
@@ -64,18 +81,20 @@ namespace Rentrey.Maui
                 new RecentUpdate { IconSource = "house_icon.png", Title = "New Update from Landlord", Description = "Your Landlord has updated your lease agreement." }
             };
 
-            // Initialize the Newly Added Properties collection
-            NewlyAddedProperties = new ObservableCollection<Property>
-            {
-                new Property { ImageSource = "house1.png", Details = "4 🛏️ 2 🛁 2 🚗", Address = "27 Aldenham Road" },
-                new Property { ImageSource = "house2.png", Details = "4 🛏️ 2 🛁 2 🚗", Address = "61 Butternut Ave" }
-            };
-
             // Initialize the command for navigation
             NavigateToPropertyCommand = new Command<Property>(OnNavigateToProperty);
 
             // Set the BindingContext
             BindingContext = this;
+
+            // Load the properties from the database asynchronously
+            LoadProperties();
+        }
+
+        private async void LoadProperties()
+        {
+            var properties = await _databaseService.GetPropertiesAsync();
+            NewlyAddedProperties = new ObservableCollection<Property>(properties);
         }
 
         private async Task<PermissionStatus> GetPermissionAsync<T>() where T : Permissions.BasePermission, new()
@@ -151,9 +170,13 @@ namespace Rentrey.Maui
             if (property == null)
                 return;
 
-            // Use a simple route name and pass the object in the dictionary parameter.
-            // Use '///' to navigate to a top-level route.
-            await Shell.Current.GoToAsync($"///PropertyPage");
+            var navigationParameter = new Dictionary<string, object>
+            {
+                { "property", property }
+            };
+
+            // Use an absolute path with the tab and child page route names
+            await Shell.Current.GoToAsync($"//HomePage/PropertyPage", navigationParameter);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
