@@ -1,6 +1,10 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
+using Rentrey;
+using RentreyApp.Services;
+using System;
+using System.IO;
 
-namespace Rentrey
+namespace RentreyApp
 {
     public static class MauiProgram
     {
@@ -15,8 +19,12 @@ namespace Rentrey
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
 
+            // Register DatabaseService as a singleton
+            string dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "properties.db3");
+            builder.Services.AddSingleton(s => new DatabaseService(dbPath));
+
 #if DEBUG
-    		builder.Logging.AddDebug();
+            builder.Logging.AddDebug();
 #endif
 
             return builder.Build();
