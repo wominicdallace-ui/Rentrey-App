@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Rentrey.Maui"
+             x:Class="Rentrey.Maui.LoginPage"
+             Shell.NavBarIsVisible="False"
+             Title="Login">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="20" Padding="30" VerticalOptions="CenterAndExpand">
+            <HorizontalStackLayout Spacing="10" HorizontalOptions="Center" Margin="0,0,0,30">
+                <Image Source="appicon.png"
+                       HeightRequest="60"
+                       WidthRequest="60"/>
+                <Label Text="Rentrey"
+                       FontSize="40"
+                       FontAttributes="Bold"
+                       VerticalOptions="Center" />
+            </HorizontalStackLayout>
+            <Label Text="First Name" />
+            <Entry x:Name="FirstNameEntry"
+                   Placeholder="John" />
+            <Label Text="Last Name" />
+            <Entry x:Name="LastNameEntry"
+                   Placeholder="Smith" />
+            <Label Text="Address" />
+            <Entry x:Name="AddressEntry"
+                   Placeholder="Search for an Address" />
+            <Label Text="State" />
+            <Entry x:Name="StateEntry"
+                   Placeholder="State" />
+            <Label Text="Tax File Number" />
+            <Entry x:Name="TaxFileNumberEntry"
+                   Placeholder="TFN" />
+
+            <Button Text="Create Account"
+                    BackgroundColor="#FFC107"
+                    TextColor="Black"
+                    CornerRadius="10"
+                    FontSize="20"
+                    FontAttributes="Bold"
+                    Clicked="OnCreateAccountClicked"
+                    Margin="0,20,0,0"/>
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>
