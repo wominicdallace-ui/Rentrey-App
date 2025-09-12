@@ -25,7 +25,6 @@
                            VerticalOptions="Center"
                            Aspect="AspectFill"/>
                 </Frame>
-
                 <VerticalStackLayout Grid.Column="1"
                                      VerticalOptions="Center"
                                      Spacing="5"
@@ -50,6 +49,7 @@
                         </BoxView.Background>
                     </BoxView>
                     <Label Text="{Binding LastUpdated}" FontSize="12" TextColor="#888888"/>
+                    <Label Text="{Binding UserLocation}" FontSize="12" TextColor="#666666" FontAttributes="Italic" />
                 </VerticalStackLayout>
             </Grid>
 
