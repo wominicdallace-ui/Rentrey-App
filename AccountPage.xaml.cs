@@ -7,6 +7,8 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Maui.ApplicationModel;
 using Microsoft.Maui.Storage;
+using Microsoft.Maui.Devices.Sensors;
+using System.Diagnostics;
 
 namespace Rentrey.Maui
 {
@@ -59,6 +61,20 @@ namespace Rentrey.Maui
             }
         }
 
+        private string _userLocation;
+        public string UserLocation
+        {
+            get => _userLocation;
+            set
+            {
+                if (_userLocation != value)
+                {
+                    _userLocation = value;
+                    OnPropertyChanged(nameof(UserLocation));
+                }
+            }
+        }
+
         public string UserName { get; set; }
         public string Points { get; set; }
         public string LastUpdated { get; set; }
@@ -98,6 +114,9 @@ namespace Rentrey.Maui
 
             // Set a default profile image
             ProfileImageSource = "profilepicture.png";
+
+            // Call the GPS function when the page loads
+            _ = GetUserLocationAsync();
 
             this.BindingContext = this;
         }
@@ -167,6 +186,45 @@ namespace Rentrey.Maui
                     await stream.CopyToAsync(newStream);
                 }
                 ProfileImageSource = newFile;
+            }
+        }
+
+        // Asynchronous method to get user's location
+        public async Task GetUserLocationAsync()
+        {
+            try
+            {
+                // Check for location permissions
+                var status = await Permissions.CheckStatusAsync<Permissions.LocationWhenInUse>();
+                if (status != PermissionStatus.Granted)
+                {
+                    status = await Permissions.RequestAsync<Permissions.LocationWhenInUse>();
+                }
+
+                if (status == PermissionStatus.Granted)
+                {
+                    var request = new GeolocationRequest(GeolocationAccuracy.Medium, TimeSpan.FromSeconds(10));
+                    var location = await Geolocation.GetLocationAsync(request);
+
+                    if (location != null)
+                    {
+                        UserLocation = $"Lat: {location.Latitude}, Long: {location.Longitude}";
+                        Debug.WriteLine(UserLocation);
+                    }
+                    else
+                    {
+                        UserLocation = "Location not available.";
+                    }
+                }
+                else
+                {
+                    UserLocation = "Location permission denied.";
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error getting location: {ex.Message}");
+                UserLocation = "Error getting location.";
             }
         }
 
