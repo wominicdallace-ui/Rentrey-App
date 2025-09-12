@@ -1,12 +1,19 @@
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Windows.Input;
 using Microsoft.Maui.Controls;
+using Microsoft.Maui.ApplicationModel;
+using Microsoft.Maui.Storage;
+using System.IO;
+using System.Threading.Tasks;
+using Rentrey;
 
 namespace Rentrey.Maui
 {
-
-    public partial class SearchPage : ContentPage
+    public partial class SearchPage : ContentPage, INotifyPropertyChanged
     {
         public ObservableCollection<Property> NewlyAddedProperties { get; set; }
+        public ICommand NavigateToPropertyCommand { get; }
 
         public SearchPage()
         {
@@ -19,8 +26,27 @@ namespace Rentrey.Maui
                 new Property { ImageSource = "house2.png", Details = "4 🛏️ 2 🛁 2 🚗", Address = "61 Butternut Ave" }
             };
 
-            // Set the BindingContext for the page
+            // Initialize the command for navigation
+            NavigateToPropertyCommand = new Command<Property>(OnNavigateToProperty);
+
+            // Set the BindingContext
             this.BindingContext = this;
+        }
+
+        private async void OnNavigateToProperty(Property property)
+        {
+            if (property == null)
+                return;
+
+            // Use a simple route name and pass the object in the dictionary parameter.
+            // Use '///' to navigate to a top-level route.
+            await Shell.Current.GoToAsync($"///PropertyPage");
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
