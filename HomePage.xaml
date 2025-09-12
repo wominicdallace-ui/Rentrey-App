@@ -4,44 +4,34 @@
              xmlns:local="clr-namespace:Rentrey.Maui"
              x:Class="Rentrey.Maui.HomePage"
              BackgroundColor="#F5F5F5"
-             Title="Rentrey">
+             Title="Home">
 
     <Grid RowDefinitions="Auto,*,70">
-        <ScrollView Grid.Row="0" Grid.RowSpan="2">
-            <VerticalStackLayout Spacing="15" Padding="15">
-
-                <!-- Header Section -->
+        <ScrollView Grid.Row="1" Grid.RowSpan="2">
+            <VerticalStackLayout Spacing="5" Padding="15">
                 <Grid ColumnDefinitions="Auto,*,Auto" Margin="0,15,0,0">
-                    <Frame Grid.Column="0" 
-                            CornerRadius="50" 
-                            HeightRequest="60" 
-                            WidthRequest="60" 
-                            BorderColor="#FFD700" 
-                            BackgroundColor="#FFF8DC" 
-                            HorizontalOptions="Center" 
-                            VerticalOptions="Center">
-                        <Image Source="profile_icon.png" 
-                                HorizontalOptions="Center" 
-                                VerticalOptions="Center" />
+                    <Frame Grid.Column="0"
+                           CornerRadius="50"
+                           HeightRequest="60"
+                           WidthRequest="60"
+                           BorderColor="#FFD700"
+                           BackgroundColor="#FFF8DC"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"
+                           Padding="0">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="LoadImage"/>
+                        </Frame.GestureRecognizers>
+                        <Image Source="{Binding ProfileImageSource}"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               Aspect="AspectFill" />
                     </Frame>
 
-                    <VerticalStackLayout 
-                      Grid.Column="1" 
-                      VerticalOptions="Center" 
-                      Spacing="5" 
-                      Margin="10,0,0,0">
-                        <Label Text="{Binding UserName}" 
-                                FontSize="18" 
-                                FontAttributes="Bold" 
-                                TextColor="#333333"/>
-                        <Label Text="{Binding Points}" 
-                                FontSize="20" 
-                                FontAttributes="Bold" 
-                                TextColor="#4CAF50"/>
-                        <BoxView HeightRequest="8" 
-                                  BackgroundColor="#D3D3D3" 
-                                  CornerRadius="4" 
-                                  HorizontalOptions="FillAndExpand">
+                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="5" Margin="10,0,0,0">
+                        <Label Text="{Binding UserName}" FontSize="18" FontAttributes="Bold" TextColor="#333333"/>
+                        <Label Text="{Binding Points}" FontSize="20" FontAttributes="Bold" TextColor="#4CAF50"/>
+                        <BoxView HeightRequest="8" BackgroundColor="#D3D3D3" CornerRadius="4" HorizontalOptions="FillAndExpand">
                             <BoxView.Background>
                                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
                                     <GradientStop Color="#4CAF50" Offset="{Binding ProgressRatio}" />
@@ -53,40 +43,24 @@
                     </VerticalStackLayout>
                 </Grid>
 
-                <!-- Recent Updates Section -->
-                <Label Text="Recent Updates" 
-                        FontSize="20" 
-                        FontAttributes="Bold" 
-                        TextColor="#333333" 
-                        Margin="0,15,0,0"/>
-                <CollectionView ItemsSource="{Binding RecentUpdates}" HeightRequest="100">
+                <Label Text="Recent Updates" FontSize="20" FontAttributes="Bold" TextColor="#333333" Margin="0,15,0,0"/>
+                <CollectionView ItemsSource="{Binding RecentUpdates}" HeightRequest="150">
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
-                            <Frame CornerRadius="10" 
-                                    Padding="10" 
-                                    BackgroundColor="White" 
-                                    Margin="0,5">
+                            <Border Padding="20" BackgroundColor="White" Margin="0,5">
                                 <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
-                                    <Image Source="{Binding IconSource}" 
-                                            HeightRequest="40" 
-                                            WidthRequest="40" 
-                                            VerticalOptions="Center" />
+                                    <Image Source="{Binding IconSource}" HeightRequest="40" WidthRequest="40" VerticalOptions="Center" />
                                     <VerticalStackLayout Spacing="2" VerticalOptions="Center">
                                         <Label Text="{Binding Title}" FontAttributes="Bold" TextColor="#333333" />
                                         <Label Text="{Binding Description}" TextColor="#888888" />
                                     </VerticalStackLayout>
                                 </HorizontalStackLayout>
-                            </Frame>
+                            </Border>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
 
-                <!-- Newly Added Properties Section -->
-                <Label Text="Newly Added Properties" 
-                        FontSize="20" 
-                        FontAttributes="Bold" 
-                        TextColor="#333333" 
-                        Margin="0,15,0,0"/>
+                <Label Text="Newly Added Properties" FontSize="20" FontAttributes="Bold" TextColor="#333333" Margin="0,15,0,0"/>
                 <CollectionView ItemsSource="{Binding NewlyAddedProperties}" HeightRequest="250">
                     <CollectionView.ItemsLayout>
                         <LinearItemsLayout Orientation="Horizontal" ItemSpacing="15"/>
@@ -94,28 +68,22 @@
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
                             <Frame CornerRadius="10" Padding="0" WidthRequest="250">
+                                <Frame.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type local:HomePage}}, Path=BindingContext.NavigateToPropertyCommand}"
+                                        CommandParameter="{Binding .}" />
+                                </Frame.GestureRecognizers>
                                 <VerticalStackLayout>
                                     <Image Source="{Binding ImageSource}" Aspect="AspectFill" HeightRequest="180" />
                                     <VerticalStackLayout Padding="10">
-                                        <Label Text="{Binding Details}" 
-                                                HorizontalOptions="Start" 
-                                                FontSize="14" 
-                                                FontAttributes="Bold"/>
-                                        <Label Text="{Binding Address}" 
-                                                HorizontalOptions="Start" 
-                                                FontSize="16" 
-                                                FontAttributes="Bold" 
-                                                Margin="0,5,0,0" />
+                                        <Label Text="{Binding Details}" HorizontalOptions="Start" FontSize="14" FontAttributes="Bold"/>
+                                        <Label Text="{Binding Address}" HorizontalOptions="Start" FontSize="16" FontAttributes="Bold" Margin="0,5,0,0" />
                                     </VerticalStackLayout>
                                 </VerticalStackLayout>
                             </Frame>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
-
             </VerticalStackLayout>
         </ScrollView>
     </Grid>
 </ContentPage>
-
-
