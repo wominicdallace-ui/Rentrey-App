@@ -38,9 +38,13 @@ namespace Rentrey.Maui
             if (property == null)
                 return;
 
-            // Use a simple route name and pass the object in the dictionary parameter.
-            // Use '///' to navigate to a top-level route.
-            await Shell.Current.GoToAsync($"///PropertyPage");
+            var navigationParameter = new Dictionary<string, object>
+            {
+                { "property", property }
+            };
+
+            // Use an absolute path with the tab and child page route names
+            await Shell.Current.GoToAsync($"//HomePage/PropertyPage", navigationParameter);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
