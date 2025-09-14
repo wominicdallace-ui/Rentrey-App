@@ -12,7 +12,6 @@ using System.Diagnostics;
 
 namespace Rentrey.Maui
 {
-    // A simple converter to handle the progress bar ratio
     public class RatioConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -30,7 +29,6 @@ namespace Rentrey.Maui
         }
     }
 
-    // Data models for the UI
     public class PointEntry
     {
         public int Points { get; set; }
@@ -44,7 +42,6 @@ namespace Rentrey.Maui
         public string Description { get; set; }
     }
 
-    // The ViewModel for the page, implementing INotifyPropertyChanged
     public partial class AccountPage : ContentPage, INotifyPropertyChanged
     {
         private string _profileImageSource;
@@ -96,7 +93,6 @@ namespace Rentrey.Maui
             PointsAwayText = "210 points away from Silver!";
             ProgressRatio = 0.79; // 790/1000
 
-            // Initialize the collections
             RecentPoints = new ObservableCollection<PointEntry>
             {
                 new PointEntry { Points = 10, Description = "You earned 10 points for on-time rent payment!" },
@@ -112,10 +108,8 @@ namespace Rentrey.Maui
                 new Badge { IconSource = "badge_new.png", Title = "New User", Description = "Joined the Rentrey community" }
             };
 
-            // Set a default profile image
             ProfileImageSource = "profilepicture.png";
 
-            // Call the GPS function when the page loads
             _ = GetUserLocationAsync();
 
             this.BindingContext = this;
@@ -170,7 +164,6 @@ namespace Rentrey.Maui
             }
             else
             {
-                // Fallback for devices without camera support
                 photo = await MediaPicker.PickPhotoAsync();
             }
 
@@ -189,12 +182,10 @@ namespace Rentrey.Maui
             }
         }
 
-        // Asynchronous method to get user's location
         public async Task GetUserLocationAsync()
         {
             try
             {
-                // Check for location permissions
                 var status = await Permissions.CheckStatusAsync<Permissions.LocationWhenInUse>();
                 if (status != PermissionStatus.Granted)
                 {
