@@ -11,7 +11,6 @@ using RentreyApp.Services;
 
 namespace Rentrey.Maui
 {
-    // Data model for the recent updates section
     public class RecentUpdate
     {
         public string IconSource { get; set; }
@@ -65,29 +64,23 @@ namespace Rentrey.Maui
             InitializeComponent();
             _databaseService = databaseService;
 
-            // Set a default profile image
-            ProfileImageSource = "profile_icon.png";
+            ProfileImageSource = "profilepicture.png";
 
-            // Initialize data properties
             UserName = "Lachlan";
             Points = "790 / 1000 Points";
-            ProgressRatio = 0.79; // 790 out of 1000
+            ProgressRatio = 0.79;
             LastUpdated = "Last Updated: 02/08/25";
 
-            // Initialize the Recent Updates collection with placeholder data
             RecentUpdates = new ObservableCollection<RecentUpdate>
             {
                 new RecentUpdate { IconSource = "payment_icon.png", Title = "On-Time Payment", Description = "You earned 10 points for on-time rent payment!" },
                 new RecentUpdate { IconSource = "house_icon.png", Title = "New Update from Landlord", Description = "Your Landlord has updated your lease agreement." }
             };
 
-            // Initialize the command for navigation
             NavigateToPropertyCommand = new Command<Property>(OnNavigateToProperty);
 
-            // Set the BindingContext
             BindingContext = this;
 
-            // Load the properties from the database asynchronously
             LoadProperties();
         }
 
@@ -146,7 +139,6 @@ namespace Rentrey.Maui
             }
             else
             {
-                // Fallback for devices without camera support
                 photo = await MediaPicker.PickPhotoAsync();
             }
 
@@ -175,7 +167,6 @@ namespace Rentrey.Maui
                 { "property", property }
             };
 
-            // Use an absolute path with the tab and child page route names
             await Shell.Current.GoToAsync($"//HomePage/PropertyPage", navigationParameter);
         }
 
