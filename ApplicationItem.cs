@@ -17,7 +17,7 @@ namespace Rentrey.Maui
     {
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
-        public int PropertyId { get; set; } // Foreign key to link to a Property
+        public int PropertyId { get; set; }
         public string PropertyAddress { get; set; }
         public ApplicationStatus Status { get; set; }
         public DateTime ApplicationDate { get; set; }
