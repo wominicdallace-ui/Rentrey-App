@@ -19,7 +19,6 @@ namespace RentreyApp
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
 
-            // Register DatabaseService as a singleton
             string dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "properties.db3");
             builder.Services.AddSingleton(s => new DatabaseService(dbPath));
 
