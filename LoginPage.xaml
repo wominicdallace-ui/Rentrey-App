@@ -9,7 +9,7 @@
     <ScrollView>
         <VerticalStackLayout Spacing="20" Padding="30" VerticalOptions="CenterAndExpand">
             <HorizontalStackLayout Spacing="10" HorizontalOptions="Center" Margin="0,0,0,30">
-                <Image Source="appicon.png"
+                <Image Source="rentreylogo.png"
                        HeightRequest="60"
                        WidthRequest="60"/>
                 <Label Text="Rentrey"
@@ -27,8 +27,10 @@
             <Entry x:Name="AddressEntry"
                    Placeholder="Search for an Address" />
             <Label Text="State" />
-            <Entry x:Name="StateEntry"
-                   Placeholder="State" />
+            <Picker x:Name="StatePicker"
+                    ItemsSource="{Binding StatesList}"
+                    SelectedItem="{Binding State}"
+                    Title="Select a State" />
             <Label Text="Tax File Number" />
             <Entry x:Name="TaxFileNumberEntry"
                    Placeholder="TFN" />
