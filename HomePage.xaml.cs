@@ -8,9 +8,12 @@ using System.IO;
 using System.Threading.Tasks;
 using Rentrey;
 using RentreyApp.Services;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Rentrey.Maui
 {
+    // Data model for the recent updates section
     public class RecentUpdate
     {
         public string IconSource { get; set; }
@@ -20,6 +23,7 @@ namespace Rentrey.Maui
 
     public partial class HomePage : ContentPage, INotifyPropertyChanged
     {
+        private readonly ProptrackService _proptrackService;
         private readonly DatabaseService _databaseService;
 
         private string _profileImageSource;
@@ -35,7 +39,7 @@ namespace Rentrey.Maui
                 }
             }
         }
-
+        
         private ObservableCollection<Property> _newlyAddedProperties;
         public ObservableCollection<Property> NewlyAddedProperties
         {
@@ -59,37 +63,66 @@ namespace Rentrey.Maui
 
         public ICommand NavigateToPropertyCommand { get; }
 
-        public HomePage(DatabaseService databaseService)
+        public HomePage(DatabaseService databaseService, ProptrackService proptrackService)
         {
             InitializeComponent();
             _databaseService = databaseService;
+            _proptrackService = proptrackService;
+            
+            // Call the method to load data
+            LoadData();
 
-            ProfileImageSource = "profilepicture.png";
+            // Set a default profile image
+            ProfileImageSource = "profile_icon.png";
 
+            // Initialize data properties
             UserName = "Lachlan";
             Points = "790 / 1000 Points";
-            ProgressRatio = 0.79;
+            ProgressRatio = 0.79; // 790 out of 1000
             LastUpdated = "Last Updated: 02/08/25";
 
+            // Initialize the Recent Updates collection with placeholder data
             RecentUpdates = new ObservableCollection<RecentUpdate>
             {
                 new RecentUpdate { IconSource = "payment_icon.png", Title = "On-Time Payment", Description = "You earned 10 points for on-time rent payment!" },
                 new RecentUpdate { IconSource = "house_icon.png", Title = "New Update from Landlord", Description = "Your Landlord has updated your lease agreement." }
             };
 
+            // Initialize the command for navigation
             NavigateToPropertyCommand = new Command<Property>(OnNavigateToProperty);
 
+            // Set the BindingContext
             BindingContext = this;
-
-            LoadProperties();
         }
 
-        private async void LoadProperties()
+        private async void LoadData()
         {
-            var properties = await _databaseService.GetPropertiesAsync();
-            NewlyAddedProperties = new ObservableCollection<Property>(properties);
+            // First, try to load data from the local database
+            var localProperties = await _databaseService.GetPropertiesAsync();
+            if (localProperties.Any())
+            {
+                NewlyAddedProperties = new ObservableCollection<Property>(localProperties);
+            }
+            else
+            {
+                // If the database is empty, get data from the API
+                var apiProperties = await _proptrackService.GetListingsAsync();
+                if (apiProperties.Any())
+                {
+                    // Save the new data to the local database for future use
+                    foreach (var prop in apiProperties)
+                    {
+                        await _databaseService.SavePropertyAsync(prop);
+                    }
+                    NewlyAddedProperties = new ObservableCollection<Property>(apiProperties);
+                }
+                else
+                {
+                    // Handle no data case
+                }
+            }
         }
-
+        
         private async Task<PermissionStatus> GetPermissionAsync<T>() where T : Permissions.BasePermission, new()
         {
             PermissionStatus status = await Permissions.CheckStatusAsync<T>();
@@ -139,6 +172,7 @@ namespace Rentrey.Maui
             }
             else
             {
+                // Fallback for devices without camera support
                 photo = await MediaPicker.PickPhotoAsync();
             }
 
@@ -146,7 +180,7 @@ namespace Rentrey.Maui
             {
                 string imagesDir = System.IO.Path.Combine(FileSystem.Current.AppDataDirectory, "images");
                 System.IO.Directory.CreateDirectory(imagesDir);
-
+                
                 var newFile = System.IO.Path.Combine(imagesDir, photo.FileName);
                 using (var stream = await photo.OpenReadAsync())
                 using (var newStream = File.OpenWrite(newFile))
@@ -156,7 +190,7 @@ namespace Rentrey.Maui
                 ProfileImageSource = newFile;
             }
         }
-
+        
         private async void OnNavigateToProperty(Property property)
         {
             if (property == null)
@@ -167,7 +201,7 @@ namespace Rentrey.Maui
                 { "property", property }
             };
 
-            await Shell.Current.GoToAsync($"//HomePage/PropertyPage", navigationParameter);
+            await Shell.Current.GoToAsync("PropertyPage", navigationParameter);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
