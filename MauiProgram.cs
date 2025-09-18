@@ -1,8 +1,8 @@
 using Microsoft.Extensions.Logging;
-using Rentrey;
 using RentreyApp.Services;
-using System;
 using System.IO;
+using System;
+using Rentrey;
 
 namespace RentreyApp
 {
@@ -21,6 +21,9 @@ namespace RentreyApp
 
             string dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "properties.db3");
             builder.Services.AddSingleton(s => new DatabaseService(dbPath));
+            
+            // Register your API service as a singleton
+            builder.Services.AddSingleton<ProptrackPropertiesService>();
 
 #if DEBUG
             builder.Logging.AddDebug();
