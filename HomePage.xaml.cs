@@ -122,7 +122,7 @@ namespace Rentrey.Maui
                 }
             }
         }
-        
+
         private async Task<PermissionStatus> GetPermissionAsync<T>() where T : Permissions.BasePermission, new()
         {
             PermissionStatus status = await Permissions.CheckStatusAsync<T>();
