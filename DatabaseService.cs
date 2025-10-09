@@ -51,7 +51,7 @@ namespace RentreyApp.Services
                         ListingId = "2072679238",
                         ImageSource = "p1oleandercanton.jpg",
                         Details = "4 🛏️ 3 🛁 2 🚗",
-                        Address = "1 Oleander St, Canton Beach",
+                        Address = "44 Oleander St, Canton Beach",
                         Price = 1000,
                         Latitude = -33.27438911103409,
                         Longitude = 151.54706085009724,
@@ -210,3 +210,4 @@ namespace RentreyApp.Services
         #endregion
     }
 }
+
