@@ -9,15 +9,19 @@ using Microsoft.Maui.ApplicationModel;
 using Microsoft.Maui.Storage;
 using Microsoft.Maui.Devices.Sensors;
 using System.Diagnostics;
+using System;
+using RentreyApp.Services; // Still needed for DatabaseService
 
 namespace Rentrey.Maui
 {
     public class RatioConverter : IValueConverter
     {
+        // ... (RatioConverter implementation remains unchanged) ...
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is double ratio)
             {
+                // This is used for the LinearGradientBrush StartPoint/EndPoint in XAML
                 return new Point(ratio, 0);
             }
             return new Point(0, 0);
@@ -44,6 +48,9 @@ namespace Rentrey.Maui
 
     public partial class AccountPage : ContentPage, INotifyPropertyChanged
     {
+        // REMOVED: private readonly MediaService _mediaService;
+        private readonly DatabaseService _databaseService; // Kept for consistency, though not used here
+
         private string _profileImageSource;
         public string ProfileImageSource
         {
@@ -82,9 +89,12 @@ namespace Rentrey.Maui
         public ObservableCollection<PointEntry> RecentPoints { get; set; }
         public ObservableCollection<Badge> EarnedBadges { get; set; }
 
-        public AccountPage()
+        // CORRECTED CONSTRUCTOR: Only accepts DatabaseService (or parameterless, but keeping DS for DI consistency)
+        public AccountPage(DatabaseService databaseService)
         {
             InitializeComponent();
+            // REMOVED: _mediaService = mediaService;
+            _databaseService = databaseService;
 
             UserName = "Lachlan";
             Points = "790 / 1000 Points";
@@ -114,6 +124,8 @@ namespace Rentrey.Maui
 
             this.BindingContext = this;
         }
+
+        // --- RESTORED LOCAL IMAGE HANDLING LOGIC ---
 
         private async Task<PermissionStatus> GetPermissionAsync<T>() where T : Permissions.BasePermission, new()
         {
@@ -182,6 +194,7 @@ namespace Rentrey.Maui
             }
         }
 
+        // ... (GetUserLocationAsync implementation remains unchanged) ...
         public async Task GetUserLocationAsync()
         {
             try

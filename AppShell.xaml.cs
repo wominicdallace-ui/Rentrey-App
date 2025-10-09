@@ -1,4 +1,6 @@
-using Microsoft.Maui.Controls;
+﻿using Microsoft.Maui.Controls;
+using Rentrey.Maui;
+using System.Collections.Generic;
 
 namespace Rentrey
 {
@@ -7,19 +9,12 @@ namespace Rentrey
         public AppShell()
         {
             InitializeComponent();
-        }
 
-        protected override async void OnNavigating(ShellNavigatingEventArgs args)
-        {
-            base.OnNavigating(args);
+            // Register a route for the PropertyPage
+            Routing.RegisterRoute("PropertyPage", typeof(PropertyPage));
 
-            // Check if we are navigating to the main page and if a login is required.
-            if (args.Current == null && args.Source == ShellNavigationSource.ShellSectionChanged)
-            {
-                // This is the first navigation after app startup.
-                // Navigate to the login page.
-                await Shell.Current.GoToAsync("LoginPage");
-            }
+            // Register a route for the LoginPage
+            Routing.RegisterRoute("LoginPage", typeof(LoginPage));
         }
     }
 }

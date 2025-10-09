@@ -1,4 +1,4 @@
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
 using Microsoft.Maui.Controls;
@@ -10,6 +10,7 @@ using Rentrey;
 using RentreyApp.Services;
 using System.Collections.Generic;
 using System.Linq;
+using System.Diagnostics;
 
 namespace Rentrey.Maui
 {
@@ -23,7 +24,6 @@ namespace Rentrey.Maui
 
     public partial class HomePage : ContentPage, INotifyPropertyChanged
     {
-        private readonly ProptrackService _proptrackService;
         private readonly DatabaseService _databaseService;
 
         private string _profileImageSource;
@@ -39,20 +39,21 @@ namespace Rentrey.Maui
                 }
             }
         }
-        
-        private ObservableCollection<Property> _newlyAddedProperties;
-        public ObservableCollection<Property> NewlyAddedProperties
+
+        private ObservableCollection<Property> _recommendedProperties;
+        public ObservableCollection<Property> RecommendedProperties
         {
-            get => _newlyAddedProperties;
+            get => _recommendedProperties;
             set
             {
-                if (_newlyAddedProperties != value)
+                if (_recommendedProperties != value)
                 {
-                    _newlyAddedProperties = value;
-                    OnPropertyChanged(nameof(NewlyAddedProperties));
+                    _recommendedProperties = value;
+                    OnPropertyChanged(nameof(RecommendedProperties));
                 }
             }
         }
+        // NOTE: The old 'NewlyAddedProperties' property is now removed to eliminate conflicts.
 
         public string UserName { get; set; }
         public string Points { get; set; }
@@ -63,63 +64,56 @@ namespace Rentrey.Maui
 
         public ICommand NavigateToPropertyCommand { get; }
 
-        public HomePage(DatabaseService databaseService, ProptrackService proptrackService)
+        public HomePage(DatabaseService databaseService)
         {
             InitializeComponent();
             _databaseService = databaseService;
-            _proptrackService = proptrackService;
-            
-            // Call the method to load data
+
+            RecommendedProperties = new ObservableCollection<Property>();
+
             LoadData();
 
-            // Set a default profile image
             ProfileImageSource = "profile_icon.png";
-
-            // Initialize data properties
             UserName = "Lachlan";
             Points = "790 / 1000 Points";
-            ProgressRatio = 0.79; // 790 out of 1000
+            ProgressRatio = 0.79;
             LastUpdated = "Last Updated: 02/08/25";
 
-            // Initialize the Recent Updates collection with placeholder data
             RecentUpdates = new ObservableCollection<RecentUpdate>
             {
                 new RecentUpdate { IconSource = "payment_icon.png", Title = "On-Time Payment", Description = "You earned 10 points for on-time rent payment!" },
-                new RecentUpdate { IconSource = "house_icon.png", Title = "New Update from Landlord", Description = "Your Landlord has updated your lease agreement." }
+                new RecentUpdate { IconSource = "profile_nav.png", Title = "New Update from Landlord", Description = "Your Landlord has updated your lease agreement." }
             };
 
-            // Initialize the command for navigation
             NavigateToPropertyCommand = new Command<Property>(OnNavigateToProperty);
 
-            // Set the BindingContext
             BindingContext = this;
         }
 
         private async void LoadData()
         {
-            // First, try to load data from the local database
-            var localProperties = await _databaseService.GetPropertiesAsync();
-            if (localProperties.Any())
+            try
             {
-                NewlyAddedProperties = new ObservableCollection<Property>(localProperties);
-            }
-            else
-            {
-                // If the database is empty, get data from the API
-                var apiProperties = await _proptrackService.GetListingsAsync();
-                if (apiProperties.Any())
+                var properties = await _databaseService.GetPropertiesAsync();
+                if (properties.Any())
                 {
-                    // Save the new data to the local database for future use
-                    foreach (var prop in apiProperties)
+                    // Filter for properties with a price and sort by price to get the cheapest 5 properties
+                    var cheapestProperties = properties.Where(p => p.Price > 0).OrderBy(p => p.Price).Take(5).ToList();
+
+                    RecommendedProperties.Clear();
+                    foreach (var prop in cheapestProperties)
                     {
-                        await _databaseService.SavePropertyAsync(prop);
+                        RecommendedProperties.Add(prop);
                     }
-                    NewlyAddedProperties = new ObservableCollection<Property>(apiProperties);
                 }
                 else
                 {
-                    // Handle no data case
+                    Debug.WriteLine("No properties found in database.");
                 }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"An error occurred while loading data: {ex.Message}");
             }
         }
 
@@ -172,7 +166,6 @@ namespace Rentrey.Maui
             }
             else
             {
-                // Fallback for devices without camera support
                 photo = await MediaPicker.PickPhotoAsync();
             }
 
@@ -180,7 +173,7 @@ namespace Rentrey.Maui
             {
                 string imagesDir = System.IO.Path.Combine(FileSystem.Current.AppDataDirectory, "images");
                 System.IO.Directory.CreateDirectory(imagesDir);
-                
+
                 var newFile = System.IO.Path.Combine(imagesDir, photo.FileName);
                 using (var stream = await photo.OpenReadAsync())
                 using (var newStream = File.OpenWrite(newFile))
@@ -190,7 +183,7 @@ namespace Rentrey.Maui
                 ProfileImageSource = newFile;
             }
         }
-        
+
         private async void OnNavigateToProperty(Property property)
         {
             if (property == null)
@@ -198,7 +191,7 @@ namespace Rentrey.Maui
 
             var navigationParameter = new Dictionary<string, object>
             {
-                { "property", property }
+                { "propertyId", property.ListingId }
             };
 
             await Shell.Current.GoToAsync("PropertyPage", navigationParameter);

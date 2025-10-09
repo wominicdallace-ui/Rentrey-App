@@ -1,4 +1,4 @@
-namespace Rentrey
+﻿namespace Rentrey
 {
     public partial class App : Application
     {

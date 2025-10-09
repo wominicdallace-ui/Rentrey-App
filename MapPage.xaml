@@ -1,0 +1,96 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:maps="clr-namespace:Microsoft.Maui.Controls.Maps;assembly=Microsoft.Maui.Controls.Maps"
+             x:Class="Rentrey.Maui.MapPage"
+             xmlns:local="clr-namespace:Rentrey.Maui"
+             x:Name="MapPageRoot"
+             Title="Search on Map">
+
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="300"/>
+            <!-- Map takes top -->
+            <RowDefinition Height="*"/>
+            <!-- Property list scrolls below -->
+        </Grid.RowDefinitions>
+
+        <!-- Map -->
+        <maps:Map x:Name="PropertyMap"
+                  Grid.Row="0"
+                  IsShowingUser="True"
+                  MapClicked="OnMapClicked" />
+
+        <!-- Popup overlay -->
+        <BoxView x:Name="PopupOverlay"
+                 BackgroundColor="#80000000"
+                 IsVisible="False"
+                 Opacity="0"
+                 InputTransparent="False"
+                 Grid.RowSpan="2">
+            <BoxView.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnOverlayTapped" />
+            </BoxView.GestureRecognizers>
+        </BoxView>
+
+        <!-- Popup Card -->
+        <Frame x:Name="PopupCard"
+               BackgroundColor="White"
+               CornerRadius="15"
+               HasShadow="True"
+               IsVisible="False"
+               Padding="10"
+               VerticalOptions="End"
+               Margin="15">
+            <Frame.GestureRecognizers>
+                <PanGestureRecognizer PanUpdated="OnPopupPanUpdated"/>
+            </Frame.GestureRecognizers>
+
+            <VerticalStackLayout>
+                <Image x:Name="PopupImage" HeightRequest="150" Aspect="AspectFill"/>
+                <Label x:Name="PopupAddress" FontAttributes="Bold" FontSize="16" Margin="0,5,0,0"/>
+                <Label x:Name="PopupDetails" FontSize="14" TextColor="Gray" />
+                <Label x:Name="PopupPrice" FontSize="16" FontAttributes="Bold" TextColor="#FFA726"/>
+                <Button Text="View Details"
+                        Clicked="OnPopupViewDetailsClicked"
+                        BackgroundColor="#FFA726"
+                        TextColor="White"
+                        CornerRadius="10"
+                        Margin="0,5,0,0"/>
+            </VerticalStackLayout>
+        </Frame>
+
+        <!-- Search bar above property list -->
+        <SearchBar Grid.Row="1"
+                   Placeholder="Search by address..."
+                   SearchCommand="{Binding SearchCommand}"
+                   Text="{Binding SearchText}"
+                   Margin="15,10,15,0"/>
+
+        <!-- Property list below map -->
+        <CollectionView Grid.Row="1"
+                ItemsSource="{Binding Properties}"
+                Margin="15,60,15,15">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame CornerRadius="10" Padding="10" Margin="0,5" BackgroundColor="White" HasShadow="True">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer
+                                Command="{Binding Source={x:Reference MapPageRoot}, Path=PropertyTappedCommand}"
+                                CommandParameter="{Binding .}" />
+                        </Frame.GestureRecognizers>
+                        <HorizontalStackLayout Spacing="10">
+                            <Image Source="{Binding ImageSource}" HeightRequest="80" WidthRequest="120" Aspect="AspectFill"/>
+                            <VerticalStackLayout>
+                                <Label Text="{Binding Address}" FontAttributes="Bold" FontSize="16" />
+                                <Label Text="{Binding Details}" FontSize="14" TextColor="Gray"/>
+                                <Label Text="{Binding Price, StringFormat='${0} p/w'}" FontAttributes="Bold" TextColor="#FFA726"/>
+                            </VerticalStackLayout>
+                        </HorizontalStackLayout>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+    </Grid>
+</ContentPage>

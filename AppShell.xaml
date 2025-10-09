@@ -6,37 +6,63 @@
     xmlns:local="clr-namespace:Rentrey.Maui"
     Shell.TabBarIsVisible="True">
 
-    <ShellContent
-        Title="Login"
-        ContentTemplate="{DataTemplate local:LoginPage}"
-        Route="LoginPage"
-        Shell.NavBarIsVisible="False"
-        Shell.FlyoutBehavior="Disabled"/>
-
     <TabBar>
         <Tab
             Title="Home"
-            Route="HomePage"
             Icon="homepage_nav.png">
-            <ShellContent ContentTemplate="{DataTemplate local:HomePage}" Route="HomePage" />
-            <ShellContent ContentTemplate="{DataTemplate local:PropertyPage}" Route="PropertyPage" />
+            <ShellContent ContentTemplate="{DataTemplate local:HomePage}"/>
         </Tab>
-        <Tab Title="Account"
+        <Tab  Title="Account"
              Icon="profile_nav.png">
-            <ShellContent ContentTemplate="{DataTemplate local:AccountPage}" />
+            <ShellContent ContentTemplate="{DataTemplate local:AccountPage}"/>
         </Tab>
-        <Tab Title="Search"
-             Icon="search_nav.png">
-            <ShellContent ContentTemplate="{DataTemplate local:SearchPage}" />
+        <Tab  Title="Search"
+            Icon="search_nav.png">
+            <ShellContent ContentTemplate="{DataTemplate local:MapPage}"/>
         </Tab>
-        <Tab Title="Application"
-             Icon="application_nav.png">
-            <ShellContent ContentTemplate="{DataTemplate local:ApplicationPage}" />
+        <Tab  Title="Application"
+                 Icon="application_nav.png">
+            <ShellContent ContentTemplate="{DataTemplate local:ApplicationPage}"/>
         </Tab>
-        <Tab Title="Ratings"
-             Icon="ratings_nav.png">
-            <ShellContent ContentTemplate="{DataTemplate local:RatingsPage}" />
+        <Tab  Title="Ratings"
+            Icon="ratings_nav.png">
+            <ShellContent ContentTemplate="{DataTemplate local:RatingsPage}"/>
         </Tab>
     </TabBar>
+
+    <ShellContent
+            Title="Home"
+            ContentTemplate="{DataTemplate local:HomePage}"
+            Route="HomePage"
+            Icon="homepage_nav.png"/>
+    <ShellContent
+            Title="Account"
+            ContentTemplate="{DataTemplate local:AccountPage}"
+            Route="AccountPageTemp"
+            Icon="profile_nav.png"/>
+
+    <ShellContent
+            Title="Search"
+            ContentTemplate="{DataTemplate local:MapPage}"
+            Route="MapPage"
+            Icon="search_nav.png"/>
+
+    <ShellContent
+            Title="Application"
+            ContentTemplate="{DataTemplate local:ApplicationPage}"
+            Route="ApplicationPage"
+            Icon="application_nav.png"/>
+
+    <ShellContent
+            Title="Ratings"
+            ContentTemplate="{DataTemplate local:RatingsPage}"
+            Route="RatingsPage"
+            Icon="ratings_nav.png"/>
+
+    <ShellContent
+        Title="Tenancy Application"
+        ContentTemplate="{DataTemplate local:TenancyApplicationPage}"
+        Route="TenancyApplicationPage" />
+
 
 </Shell>
