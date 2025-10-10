@@ -1,56 +1,14 @@
-using Microsoft.Maui.Controls;
+﻿using Microsoft.Maui.Controls;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Globalization;
-using System;
 using RentreyApp.Services;
+using RentreyApp.Models;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using System.Linq;
-using Rentrey;
-using Microsoft.Maui.Graphics;
-using SQLite;
 
 namespace Rentrey.Maui
 {
-    [Table("Applications")]
-    public class ApplicationItem
-    {
-        [PrimaryKey, AutoIncrement]
-        public int Id { get; set; }
-        public int PropertyId { get; set; }
-        public string PropertyAddress { get; set; }
-        public ApplicationStatus Status { get; set; }
-        public DateTime ApplicationDate { get; set; }
-
-        [Ignore]
-        public Color StatusColor => GetColorForStatus(Status);
-        [Ignore]
-        public string StatusText => $"Status: {Status}";
-
-        private Color GetColorForStatus(ApplicationStatus status)
-        {
-            switch (status)
-            {
-                case ApplicationStatus.Pending:
-                    return Color.FromArgb("#FFA726");
-                case ApplicationStatus.Approved:
-                    return Color.FromArgb("#4CAF50");
-                case ApplicationStatus.Denied:
-                    return Color.FromArgb("#EF5350");
-                default:
-                    return Color.FromArgb("#333333");
-            }
-        }
-    }
-
-    public enum ApplicationStatus
-    {
-        Pending,
-        Approved,
-        Denied
-    }
-
     public partial class ApplicationPage : ContentPage, INotifyPropertyChanged
     {
         private readonly DatabaseService _databaseService;
@@ -74,15 +32,21 @@ namespace Rentrey.Maui
             InitializeComponent();
             _databaseService = databaseService;
 
-            LoadApplications();
-
             BindingContext = this;
+            LoadPendingApplications();
         }
 
-        private async void LoadApplications()
+        private async void LoadPendingApplications()
         {
             var applications = await _databaseService.GetApplicationsAsync();
-            Applications = new ObservableCollection<ApplicationItem>(applications);
+
+            // ✅ Filter only pending applications
+            var pendingApplications = applications
+                .Where(a => a.Status == ApplicationStatus.Pending)
+                .OrderByDescending(a => a.ApplicationDate)
+                .ToList();
+
+            Applications = new ObservableCollection<ApplicationItem>(pendingApplications);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

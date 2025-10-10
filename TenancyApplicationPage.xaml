@@ -27,6 +27,14 @@
                             TextColor="White"
                             CornerRadius="10"
                             Clicked="OnSubmitPdfClicked"/>
+
+                    <Label x:Name="PropertyLabel"
+                           Text="{Binding Address}"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           HorizontalOptions="Center"
+                           Margin="0,20,0,10"/>     
+
                 </VerticalStackLayout>
             </Frame>
         </VerticalStackLayout>

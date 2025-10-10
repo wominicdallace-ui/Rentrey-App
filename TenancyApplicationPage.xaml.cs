@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using RentreyApp.Services;
+using RentreyApp.Models;
 
 namespace Rentrey.Maui
 {
@@ -12,7 +13,7 @@ namespace Rentrey.Maui
 
         public TenancyApplicationPage()
         {
-            InitializeComponent(); // ✅ This links the XAML
+            InitializeComponent();
             _databaseService = new DatabaseService(Path.Combine(FileSystem.AppDataDirectory, "rentrey.db3"));
         }
 
@@ -35,7 +36,19 @@ namespace Rentrey.Maui
         {
             try
             {
+                // ✅ Save the application to the database
+                var newApplication = new ApplicationItem
+                {
+                    PropertyId = 101,
+                    PropertyAddress = "123 Example Street",
+                    Status = ApplicationStatus.Pending,
+                    ApplicationDate = DateTime.Now
+                };
+
+                await _databaseService.SaveApplicationAsync(newApplication);
+
                 await DisplayAlert("Submitted", "Your tenancy application has been successfully submitted!", "OK");
+
                 await Shell.Current.GoToAsync("///ApplicationPage");
             }
             catch (Exception ex)

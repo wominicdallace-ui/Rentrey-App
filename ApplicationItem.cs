@@ -1,9 +1,8 @@
 using SQLite;
-using System;
 using Microsoft.Maui.Graphics;
-using System.ComponentModel;
+using System;
 
-namespace Rentrey.Maui
+namespace RentreyApp.Models
 {
     public enum ApplicationStatus
     {
@@ -24,22 +23,19 @@ namespace Rentrey.Maui
 
         [Ignore]
         public Color StatusColor => GetColorForStatus(Status);
+
         [Ignore]
         public string StatusText => $"Status: {Status}";
 
-        private Color GetColorForStatus(ApplicationStatus status)
+        private static Color GetColorForStatus(ApplicationStatus status)
         {
-            switch (status)
+            return status switch
             {
-                case ApplicationStatus.Pending:
-                    return Color.FromArgb("#FFA726");
-                case ApplicationStatus.Approved:
-                    return Color.FromArgb("#4CAF50");
-                case ApplicationStatus.Denied:
-                    return Color.FromArgb("#EF5350");
-                default:
-                    return Color.FromArgb("#333333");
-            }
+                ApplicationStatus.Pending => Color.FromArgb("#FFA726"),
+                ApplicationStatus.Approved => Color.FromArgb("#4CAF50"),
+                ApplicationStatus.Denied => Color.FromArgb("#EF5350"),
+                _ => Color.FromArgb("#333333"),
+            };
         }
     }
 }
