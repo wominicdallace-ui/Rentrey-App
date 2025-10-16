@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using Microsoft.Maui.Storage;
 using RentreyApp.Services;
 using RentreyApp.Models;
 
@@ -36,7 +37,6 @@ namespace Rentrey.Maui
         {
             try
             {
-                // ✅ Save the application to the database
                 var newApplication = new ApplicationItem
                 {
                     PropertyId = 101,

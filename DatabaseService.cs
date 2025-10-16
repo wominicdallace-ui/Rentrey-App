@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System;
 using System.Diagnostics;
 using Rentrey;
+using RentreyApp.Models;
 using Rentrey.Maui;
 
 namespace RentreyApp.Services
@@ -19,13 +20,13 @@ namespace RentreyApp.Services
             // Create tables if they don't exist
             _database.CreateTableAsync<Property>().Wait();
             _database.CreateTableAsync<ApplicationItem>().Wait();
+            _database.CreateTableAsync<RentreyApp.Models.User>().Wait();
 
             SeedProperties().ConfigureAwait(false);
         }
 
         #region Property Methods
 
-        // Seed some initial property data
         private async Task SeedProperties()
         {
             try
@@ -178,23 +179,47 @@ namespace RentreyApp.Services
 
         #endregion
 
+        #region User Methods
+
+        // ⭐ ADDED: Get user by Id
+        public Task<RentreyApp.Models.User> GetUserByIdAsync(int id)
+        {
+            return _database.Table<RentreyApp.Models.User>().Where(u => u.Id == id).FirstOrDefaultAsync();
+        }
+
+        // Save or update a user
+        public Task<int> SaveUserAsync(RentreyApp.Models.User user)
+        {
+            if (user.Id != 0)
+            {
+                return _database.UpdateAsync(user);
+            }
+            else
+            {
+                return _database.InsertAsync(user);
+            }
+        }
+
+        #endregion
+
+
         #region Application Methods
 
-        // ✅ Get all tenancy applications
+        //Get all tenancy applications
         public Task<List<ApplicationItem>> GetApplicationsAsync()
             => _database.Table<ApplicationItem>()
                         .OrderByDescending(a => a.ApplicationDate)
                         .ToListAsync();
 
-        // ✅ Insert a new application
-        public Task<int> AddApplicationAsync(ApplicationItem application)
+        //Insert a new application
+        public Task<int> SaveApplicationAsync(ApplicationItem application)
             => _database.InsertAsync(application);
 
-        // ✅ Update an existing application
+        //Update an existing application
         public Task<int> UpdateApplicationAsync(ApplicationItem application)
             => _database.UpdateAsync(application);
 
-        // ✅ Get applications for a specific property
+        //Get applications for a specific property
         public Task<List<ApplicationItem>> GetApplicationsByPropertyIdAsync(int propertyId)
             => _database.Table<ApplicationItem>()
                         .Where(a => a.PropertyId == propertyId)

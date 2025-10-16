@@ -1,9 +1,9 @@
 ﻿using System.Collections.ObjectModel;
+using Microsoft.Maui.Storage;
 using System.ComponentModel;
 using System.Windows.Input;
 using Microsoft.Maui.Controls;
 using Microsoft.Maui.ApplicationModel;
-using Microsoft.Maui.Storage;
 using System.IO;
 using System.Threading.Tasks;
 using Rentrey;
@@ -11,6 +11,7 @@ using RentreyApp.Services;
 using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics;
+using Microsoft.Maui.Graphics;
 
 namespace Rentrey.Maui
 {
@@ -26,6 +27,7 @@ namespace Rentrey.Maui
     {
         private readonly DatabaseService _databaseService;
 
+        // ... (existing bound properties and collections) ...
         private string _profileImageSource;
         public string ProfileImageSource
         {
@@ -53,12 +55,27 @@ namespace Rentrey.Maui
                 }
             }
         }
-        // NOTE: The old 'NewlyAddedProperties' property is now removed to eliminate conflicts.
 
         public string UserName { get; set; }
         public string Points { get; set; }
         public double ProgressRatio { get; set; }
         public string LastUpdated { get; set; }
+
+        private Color _rankColor;
+        public Color RankColor
+        {
+            get => _rankColor;
+            set { if (_rankColor != value) { _rankColor = value; OnPropertyChanged(nameof(RankColor)); } }
+        }
+
+        // ⭐ NEW: Property to control visibility of user-specific sections
+        private bool _isUserLoggedIn;
+        public bool IsUserLoggedIn
+        {
+            get => _isUserLoggedIn;
+            set { if (_isUserLoggedIn != value) { _isUserLoggedIn = value; OnPropertyChanged(nameof(IsUserLoggedIn)); } }
+        }
+
 
         public ObservableCollection<RecentUpdate> RecentUpdates { get; set; }
 
@@ -71,12 +88,10 @@ namespace Rentrey.Maui
 
             RecommendedProperties = new ObservableCollection<Property>();
 
+            // LoadUserData() is now called from OnAppearing to refresh the header visibility
             LoadData();
 
             ProfileImageSource = "profile_icon.png";
-            UserName = "Lachlan";
-            Points = "790 / 1000 Points";
-            ProgressRatio = 0.79;
             LastUpdated = "Last Updated: 02/08/25";
 
             RecentUpdates = new ObservableCollection<RecentUpdate>
@@ -90,8 +105,78 @@ namespace Rentrey.Maui
             BindingContext = this;
         }
 
+        // ⭐ NEW: Call LoadUserData from OnAppearing to ensure the header toggles when navigating back from login
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            LoadUserData();
+        }
+
+        // ⭐ REFACTORED: Loads user data, calculates rank, color, progress, AND handles UI visibility
+        private void LoadUserData()
+        {
+            int userPoints = Preferences.Get("UserPoints", 0);
+            string userName = Preferences.Get("UserName", "Guest");
+
+            // --- Toggle Visibility Based on Login Status ---
+            bool isLoggedIn = userName != "Guest" && Preferences.Get("LoggedInUserId", 0) > 0;
+            IsUserLoggedIn = isLoggedIn; // ⭐ Set the new visibility property
+
+            // UI TOGGLE LOGIC for Header
+            ProfileFrame.IsVisible = isLoggedIn;
+            ProfileInfoStack.IsVisible = isLoggedIn;
+            CreateAccountButton.IsVisible = !isLoggedIn;
+
+            // --- Rank Logic ---
+            const int rankThreshold = 1000;
+            int pointsBase;
+
+            if (userPoints >= 3000) // Platinum (3000+)
+            {
+                pointsBase = 3000;
+                RankColor = Color.FromHex("#7E2FDE"); // Purple
+                ProgressRatio = 1.0;
+            }
+            else if (userPoints >= 2000) // Gold (2000-2999)
+            {
+                pointsBase = 2000;
+                RankColor = Color.FromHex("#FFD700"); // Gold
+                ProgressRatio = (double)(userPoints - pointsBase) / rankThreshold;
+            }
+            else if (userPoints >= 1000) // Silver (1000-1999)
+            {
+                pointsBase = 1000;
+                RankColor = Color.FromHex("#C0C0C0"); // Silver
+                ProgressRatio = (double)(userPoints - pointsBase) / rankThreshold;
+            }
+            else // Bronze (0-999)
+            {
+                pointsBase = 0;
+                RankColor = Color.FromHex("#CD7F32"); // Bronze
+                ProgressRatio = (double)userPoints / rankThreshold;
+            }
+
+            // --- Update Bound Properties ---
+            UserName = userName;
+            // Points display format (e.g., 790 / 1000 Points)
+            Points = $"{userPoints} / {pointsBase + rankThreshold} Points";
+
+            // Notify UI bindings
+            OnPropertyChanged(nameof(UserName));
+            OnPropertyChanged(nameof(Points));
+            OnPropertyChanged(nameof(ProgressRatio));
+        }
+
+        // ⭐ NEW: Method to handle the Create Account Button click
+        private async void OnCreateAccountClicked(object sender, EventArgs e)
+        {
+            await Shell.Current.GoToAsync("LoginPage");
+        }
+
+
         private async void LoadData()
         {
+            // ... (LoadData implementation remains the same) ...
             try
             {
                 var properties = await _databaseService.GetPropertiesAsync();
@@ -108,7 +193,7 @@ namespace Rentrey.Maui
                 }
                 else
                 {
-                    Debug.WriteLine("No properties found in database.");
+                    Debug.WriteLine($"Fetched {properties?.Count() ?? 0} properties from database.");
                 }
             }
             catch (Exception ex)

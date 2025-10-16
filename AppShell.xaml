@@ -4,65 +4,60 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:Rentrey.Maui"
-    Shell.TabBarIsVisible="True">
+    Shell.TabBarIsVisible="True"
+    Shell.FlyoutBehavior="Disabled">
 
     <TabBar>
         <Tab
             Title="Home"
             Icon="homepage_nav.png">
-            <ShellContent ContentTemplate="{DataTemplate local:HomePage}"/>
+            <ShellContent
+                Route="HomePage"
+                ContentTemplate="{DataTemplate local:HomePage}" />
         </Tab>
-        <Tab  Title="Account"
-             Icon="profile_nav.png">
-            <ShellContent ContentTemplate="{DataTemplate local:AccountPage}"/>
+
+        <Tab
+            Title="Account"
+            Icon="profile_nav.png">
+            <ShellContent
+                Route="AccountPage"
+                ContentTemplate="{DataTemplate local:AccountPage}" />
         </Tab>
-        <Tab  Title="Search"
+
+        <Tab
+            Title="Search"
             Icon="search_nav.png">
-            <ShellContent ContentTemplate="{DataTemplate local:MapPage}"/>
+            <ShellContent
+                Route="MapPage"
+                ContentTemplate="{DataTemplate local:MapPage}" />
         </Tab>
-        <Tab  Title="Application"
-                 Icon="application_nav.png">
-            <ShellContent ContentTemplate="{DataTemplate local:ApplicationPage}"/>
+
+        <Tab
+            Title="Application"
+            Icon="application_nav.png">
+            <ShellContent
+                Route="ApplicationPage"
+                ContentTemplate="{DataTemplate local:ApplicationPage}" />
         </Tab>
-        <Tab  Title="Ratings"
+
+        <Tab
+            Title="Ratings"
             Icon="ratings_nav.png">
-            <ShellContent ContentTemplate="{DataTemplate local:RatingsPage}"/>
+            <ShellContent
+                Route="RatingsPage"
+                ContentTemplate="{DataTemplate local:RatingsPage}" />
         </Tab>
     </TabBar>
 
+    <!-- ✅ Other Pages Outside Tabs (for navigation only) -->
     <ShellContent
-            Title="Home"
-            ContentTemplate="{DataTemplate local:HomePage}"
-            Route="HomePage"
-            Icon="homepage_nav.png"/>
-    <ShellContent
-            Title="Account"
-            ContentTemplate="{DataTemplate local:AccountPage}"
-            Route="AccountPageTemp"
-            Icon="profile_nav.png"/>
-
-    <ShellContent
-            Title="Search"
-            ContentTemplate="{DataTemplate local:MapPage}"
-            Route="MapPage"
-            Icon="search_nav.png"/>
-
-    <ShellContent
-            Title="Application"
-            ContentTemplate="{DataTemplate local:ApplicationPage}"
-            Route="ApplicationPage"
-            Icon="application_nav.png"/>
-
-    <ShellContent
-            Title="Ratings"
-            ContentTemplate="{DataTemplate local:RatingsPage}"
-            Route="RatingsPage"
-            Icon="ratings_nav.png"/>
+        Title="Login"
+        ContentTemplate="{DataTemplate local:LoginPage}"
+        Route="LoginPage"
+        Shell.NavBarIsVisible="False" />
 
     <ShellContent
         Title="Tenancy Application"
         ContentTemplate="{DataTemplate local:TenancyApplicationPage}"
         Route="TenancyApplicationPage" />
-
-
 </Shell>

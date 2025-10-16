@@ -1,4 +1,5 @@
-using Microsoft.Maui.Controls;
+﻿using Microsoft.Maui.Controls;
+using Microsoft.Maui.Storage;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -14,8 +15,7 @@ namespace Rentrey.Maui
     {
         private readonly DatabaseService _databaseService;
 
-        // Hardcoded user score for logic testing (you could later fetch this from a user profile)
-        private const int UserScore = 790;
+        private int _userScore = 0; // Field to hold the dynamic user score
 
         private Property _property;
 
@@ -76,26 +76,85 @@ namespace Rentrey.Maui
         public string LastUpdated { get; set; } = "Last Updated: 02/08/25";
         public string ProfileImageSource { get; set; } = "profile_icon.png";
 
+        // ⭐ NEW: Color property for points text and progress bar
+        private Color _rankColor;
+        public Color RankColor
+        {
+            get => _rankColor;
+            set { if (_rankColor != value) { _rankColor = value; OnPropertyChanged(nameof(RankColor)); } }
+        }
+
         public PropertyPage(DatabaseService databaseService)
         {
             InitializeComponent();
             _databaseService = databaseService;
 
-            // Keep the page as the binding context (so Property and status values are accessible)
+            LoadUserData(); // Load user data upon initialization
+
             this.BindingContext = this;
         }
+
+        // ⭐ REFACTORED: Loads user data, calculates rank, color, and progress
+        private void LoadUserData()
+        {
+            // Retrieve data from Preferences (guaranteed to be consistent with HomePage/AccountPage)
+            int userPoints = Preferences.Get("UserPoints", 0);
+            string userName = Preferences.Get("UserName", "Guest");
+
+            // --- Rank Logic ---
+            const int rankThreshold = 1000;
+            int pointsBase;
+
+            if (userPoints >= 3000) // Platinum (3000+)
+            {
+                pointsBase = 3000;
+                RankColor = Color.FromHex("#7E2FDE"); // Purple
+                ProgressRatio = 1.0;
+            }
+            else if (userPoints >= 2000) // Gold (2000-2999)
+            {
+                pointsBase = 2000;
+                RankColor = Color.FromHex("#FFD700"); // Gold
+                ProgressRatio = (double)(userPoints - pointsBase) / rankThreshold;
+            }
+            else if (userPoints >= 1000) // Silver (1000-1999)
+            {
+                pointsBase = 1000;
+                RankColor = Color.FromHex("#C0C0C0"); // Silver
+                ProgressRatio = (double)(userPoints - pointsBase) / rankThreshold;
+            }
+            else // Bronze (0-999)
+            {
+                pointsBase = 0;
+                RankColor = Color.FromHex("#CD7F32"); // Bronze
+                ProgressRatio = (double)userPoints / rankThreshold;
+            }
+
+            // --- Update Bound Properties ---
+            _userScore = userPoints; // Used for eligibility check (CalculateApplicationChance)
+            UserName = userName;
+            // Points display format (e.g., 790 / 1000 Points)
+            Points = $"{userPoints} / {pointsBase + rankThreshold} Points";
+
+            // Trigger property updates for data binding
+            OnPropertyChanged(nameof(UserName));
+            OnPropertyChanged(nameof(Points));
+            OnPropertyChanged(nameof(ProgressRatio));
+        }
+
 
         // Calculates application chance and updates the color/text accordingly
         private void CalculateApplicationChance(Property property)
         {
             if (property == null) return;
 
-            if (UserScore >= property.PreferredRating)
+            // UPDATED: Use the dynamic _userScore instead of the constant UserScore
+            if (_userScore >= property.PreferredRating)
             {
                 ApplicationStatusText = "Great Chance at Successful Application";
                 ApplicationColor = Color.FromArgb("#2E7D32"); // Green
             }
-            else if (UserScore >= property.MinimumRating)
+            else if (_userScore >= property.MinimumRating)
             {
                 ApplicationStatusText = "Good Chance at Successful Application";
                 ApplicationColor = Color.FromArgb("#FFC107"); // Yellow/Amber
@@ -154,12 +213,7 @@ namespace Rentrey.Maui
                     { "propertyId", Property.ListingId }
                 };
 
-            // Pass 'query' here instead of 'navParam'
             await Shell.Current.GoToAsync("///TenancyApplicationPage", query);
         }
-
-
     }
-
 }
-
