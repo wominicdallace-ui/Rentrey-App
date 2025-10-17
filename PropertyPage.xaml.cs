@@ -94,7 +94,7 @@ namespace Rentrey.Maui
             this.BindingContext = this;
         }
 
-        // ⭐ REFACTORED: Loads user data, calculates rank, color, and progress
+        // ⭐ UPDATED RANK LOGIC
         private void LoadUserData()
         {
             // Retrieve data from Preferences (guaranteed to be consistent with HomePage/AccountPage)
@@ -105,11 +105,33 @@ namespace Rentrey.Maui
             const int rankThreshold = 1000;
             int pointsBase;
 
-            if (userPoints >= 3000) // Platinum (3000+)
+            // Legendary Rank: 6000+ points (MAX RANK)
+            if (userPoints >= 6000)
+            {
+                pointsBase = 6000;
+                RankColor = Color.FromHex("#FF8C00"); // Orange/Crimson glow
+                ProgressRatio = 1.0;
+            }
+            // Crimson Rank: 5000 - 5999 points
+            else if (userPoints >= 5000)
+            {
+                pointsBase = 5000;
+                RankColor = Color.FromHex("#DC143C"); // Crimson Red
+                ProgressRatio = (double)(userPoints - pointsBase) / rankThreshold;
+            }
+            // Emerald Rank: 4000 - 4999 points
+            else if (userPoints >= 4000)
+            {
+                pointsBase = 4000;
+                RankColor = Color.FromHex("#50C878"); // Emerald Green
+                ProgressRatio = (double)(userPoints - pointsBase) / rankThreshold;
+            }
+            // Diamond Rank: 3000 - 3999 points
+            else if (userPoints >= 3000)
             {
                 pointsBase = 3000;
-                RankColor = Color.FromHex("#7E2FDE"); // Purple
-                ProgressRatio = 1.0;
+                RankColor = Color.FromHex("#00BFFF"); // Deep Sky Blue
+                ProgressRatio = (double)(userPoints - pointsBase) / rankThreshold;
             }
             else if (userPoints >= 2000) // Gold (2000-2999)
             {

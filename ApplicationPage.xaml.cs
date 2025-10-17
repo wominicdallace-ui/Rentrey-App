@@ -6,6 +6,7 @@ using RentreyApp.Models;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Windows.Input; // ⭐ ADDED for ICommand
 
 namespace Rentrey.Maui
 {
@@ -27,26 +28,65 @@ namespace Rentrey.Maui
             }
         }
 
+        // ⭐ NEW: Command for deleting an application
+        public ICommand DeleteApplicationCommand { get; }
+
         public ApplicationPage(DatabaseService databaseService)
         {
             InitializeComponent();
             _databaseService = databaseService;
 
+            // ⭐ Initialize the delete command
+            DeleteApplicationCommand = new Command<ApplicationItem>(async (item) => await OnDeleteApplicationClicked(item));
+
             BindingContext = this;
-            LoadPendingApplications();
         }
 
-        private async void LoadPendingApplications()
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            LoadApplications();
+        }
+
+        private async void LoadApplications()
         {
             var applications = await _databaseService.GetApplicationsAsync();
 
-            // ✅ Filter only pending applications
-            var pendingApplications = applications
-                .Where(a => a.Status == ApplicationStatus.Pending)
+            var allApplications = applications
                 .OrderByDescending(a => a.ApplicationDate)
                 .ToList();
 
-            Applications = new ObservableCollection<ApplicationItem>(pendingApplications);
+            Applications = new ObservableCollection<ApplicationItem>(allApplications);
+        }
+
+        // ⭐ NEW: Logic to handle the delete button click
+        private async Task OnDeleteApplicationClicked(ApplicationItem application)
+        {
+            if (application == null)
+                return;
+
+            // 1. Ask for confirmation
+            bool confirm = await DisplayAlert("Confirm Deletion",
+                                              $"Are you sure you want to withdraw and delete the application for {application.PropertyAddress}?",
+                                              "Yes, Delete", "Cancel");
+
+            if (confirm)
+            {
+                try
+                {
+                    // 2. Delete from database
+                    await _databaseService.DeleteApplicationAsync(application);
+
+                    // 3. Remove from ObservableCollection to update UI instantly
+                    Applications.Remove(application);
+
+                    await DisplayAlert("Success", "Application deleted.", "OK");
+                }
+                catch (Exception ex)
+                {
+                    await DisplayAlert("Error", $"Failed to delete application: {ex.Message}", "OK");
+                }
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

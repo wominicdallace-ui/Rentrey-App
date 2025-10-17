@@ -27,7 +27,6 @@ namespace Rentrey.Maui
     {
         private readonly DatabaseService _databaseService;
 
-        // ... (existing bound properties and collections) ...
         private string _profileImageSource;
         public string ProfileImageSource
         {
@@ -68,7 +67,7 @@ namespace Rentrey.Maui
             set { if (_rankColor != value) { _rankColor = value; OnPropertyChanged(nameof(RankColor)); } }
         }
 
-        // ⭐ NEW: Property to control visibility of user-specific sections
+        // ⭐ Property to control visibility of user-specific sections
         private bool _isUserLoggedIn;
         public bool IsUserLoggedIn
         {
@@ -88,9 +87,6 @@ namespace Rentrey.Maui
 
             RecommendedProperties = new ObservableCollection<Property>();
 
-            // LoadUserData() is now called from OnAppearing to refresh the header visibility
-            LoadData();
-
             ProfileImageSource = "profile_icon.png";
             LastUpdated = "Last Updated: 02/08/25";
 
@@ -105,14 +101,14 @@ namespace Rentrey.Maui
             BindingContext = this;
         }
 
-        // ⭐ NEW: Call LoadUserData from OnAppearing to ensure the header toggles when navigating back from login
         protected override void OnAppearing()
         {
             base.OnAppearing();
             LoadUserData();
+            LoadData();
         }
 
-        // ⭐ REFACTORED: Loads user data, calculates rank, color, progress, AND handles UI visibility
+        // ⭐ UPDATED RANK LOGIC
         private void LoadUserData()
         {
             int userPoints = Preferences.Get("UserPoints", 0);
@@ -120,7 +116,7 @@ namespace Rentrey.Maui
 
             // --- Toggle Visibility Based on Login Status ---
             bool isLoggedIn = userName != "Guest" && Preferences.Get("LoggedInUserId", 0) > 0;
-            IsUserLoggedIn = isLoggedIn; // ⭐ Set the new visibility property
+            IsUserLoggedIn = isLoggedIn;
 
             // UI TOGGLE LOGIC for Header
             ProfileFrame.IsVisible = isLoggedIn;
@@ -131,11 +127,29 @@ namespace Rentrey.Maui
             const int rankThreshold = 1000;
             int pointsBase;
 
-            if (userPoints >= 3000) // Platinum (3000+)
+            if (userPoints >= 6000) // Legendary (6000+)
+            {
+                pointsBase = 6000;
+                RankColor = Color.FromHex("#FF8C00"); // Orange/Crimson glow
+                ProgressRatio = 1.0;
+            }
+            else if (userPoints >= 5000) // Crimson (5000-5999)
+            {
+                pointsBase = 5000;
+                RankColor = Color.FromHex("#DC143C"); // Crimson Red
+                ProgressRatio = (double)(userPoints - pointsBase) / rankThreshold;
+            }
+            else if (userPoints >= 4000) // Emerald (4000-4999)
+            {
+                pointsBase = 4000;
+                RankColor = Color.FromHex("#50C878"); // Emerald Green
+                ProgressRatio = (double)(userPoints - pointsBase) / rankThreshold;
+            }
+            else if (userPoints >= 3000) // Diamond (3000-3999)
             {
                 pointsBase = 3000;
-                RankColor = Color.FromHex("#7E2FDE"); // Purple
-                ProgressRatio = 1.0;
+                RankColor = Color.FromHex("#00BFFF"); // Deep Sky Blue
+                ProgressRatio = (double)(userPoints - pointsBase) / rankThreshold;
             }
             else if (userPoints >= 2000) // Gold (2000-2999)
             {
@@ -167,16 +181,16 @@ namespace Rentrey.Maui
             OnPropertyChanged(nameof(ProgressRatio));
         }
 
-        // ⭐ NEW: Method to handle the Create Account Button click
-        private async void OnCreateAccountClicked(object sender, EventArgs e)
+        // ⭐ RENAMED: Method to handle the Login Button click
+        private async void OnLoginClicked(object sender, EventArgs e)
         {
+            // The guest user taps "Log In" on the home page, which takes them to the LoginPage
             await Shell.Current.GoToAsync("LoginPage");
         }
 
 
         private async void LoadData()
         {
-            // ... (LoadData implementation remains the same) ...
             try
             {
                 var properties = await _databaseService.GetPropertiesAsync();
@@ -185,6 +199,7 @@ namespace Rentrey.Maui
                     // Filter for properties with a price and sort by price to get the cheapest 5 properties
                     var cheapestProperties = properties.Where(p => p.Price > 0).OrderBy(p => p.Price).Take(5).ToList();
 
+                    // Ensure we clear and repopulate the ObservableCollection to trigger UI update
                     RecommendedProperties.Clear();
                     foreach (var prop in cheapestProperties)
                     {
@@ -193,7 +208,9 @@ namespace Rentrey.Maui
                 }
                 else
                 {
+                    // If no properties are found (e.g., database is still empty), this ensures the CollectionView knows
                     Debug.WriteLine($"Fetched {properties?.Count() ?? 0} properties from database.");
+                    RecommendedProperties.Clear(); // Ensure empty state is reflected
                 }
             }
             catch (Exception ex)

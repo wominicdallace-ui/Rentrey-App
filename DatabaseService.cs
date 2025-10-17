@@ -6,6 +6,7 @@ using System.Diagnostics;
 using Rentrey;
 using RentreyApp.Models;
 using Rentrey.Maui;
+using System.Linq; // Added for Linq usage if needed later
 
 namespace RentreyApp.Services
 {
@@ -21,6 +22,7 @@ namespace RentreyApp.Services
             _database.CreateTableAsync<Property>().Wait();
             _database.CreateTableAsync<ApplicationItem>().Wait();
             _database.CreateTableAsync<RentreyApp.Models.User>().Wait();
+            _database.CreateTableAsync<Rentrey.Maui.PropertyRating>().Wait();
 
             SeedProperties().ConfigureAwait(false);
         }
@@ -181,7 +183,15 @@ namespace RentreyApp.Services
 
         #region User Methods
 
-        // ⭐ ADDED: Get user by Id
+        // ⭐ ADDED: Get user by Email for authentication
+        public Task<RentreyApp.Models.User> GetUserByEmailAsync(string email)
+        {
+            return _database.Table<RentreyApp.Models.User>()
+                            .Where(u => u.Email == email)
+                            .FirstOrDefaultAsync();
+        }
+
+        // Get user by Id
         public Task<RentreyApp.Models.User> GetUserByIdAsync(int id)
         {
             return _database.Table<RentreyApp.Models.User>().Where(u => u.Id == id).FirstOrDefaultAsync();
@@ -202,6 +212,29 @@ namespace RentreyApp.Services
 
         #endregion
 
+        #region Rating Methods
+
+        // Gets all property ratings, ordered by newest first
+        public Task<List<PropertyRating>> GetPropertyRatingsAsync()
+            => _database.Table<PropertyRating>()
+                        .OrderByDescending(r => r.ReviewDate)
+                        .ToListAsync();
+
+        // Saves a new property rating
+        public Task<int> SaveRatingAsync(PropertyRating rating)
+            => _database.InsertAsync(rating);
+
+        // Gets all properties for the Picker/Dropdown
+        public Task<List<Property>> GetPropertiesForReviewAsync()
+            => _database.Table<Property>()
+                        .OrderBy(p => p.Address)
+                        .ToListAsync();
+        public Task<int> DeleteRatingAsync(PropertyRating rating)
+        {
+            return _database.DeleteAsync(rating);
+        }
+
+        #endregion
 
         #region Application Methods
 
@@ -225,6 +258,11 @@ namespace RentreyApp.Services
                         .Where(a => a.PropertyId == propertyId)
                         .OrderByDescending(a => a.ApplicationDate)
                         .ToListAsync();
+
+        public Task<int> DeleteApplicationAsync(ApplicationItem application)
+        {
+            return _database.DeleteAsync(application);
+        }
 
         #endregion
     }

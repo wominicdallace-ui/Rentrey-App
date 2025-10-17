@@ -95,7 +95,7 @@ namespace Rentrey.Maui
             set { if (_points != value) { _points = value; OnPropertyChanged(nameof(Points)); } }
         }
 
-        // ⭐ NEW: Color to be used for Points text and Progress Bar
+        // ⭐ Color to be used for Points text and Progress Bar
         private Color _rankColor;
         public Color RankColor
         {
@@ -103,7 +103,7 @@ namespace Rentrey.Maui
             set { if (_rankColor != value) { _rankColor = value; OnPropertyChanged(nameof(RankColor)); } }
         }
 
-        // ⭐ NEW: Text indicating the next rank goal
+        // ⭐ Text indicating the next rank goal
         private string _nextRankText;
         public string NextRankText
         {
@@ -120,7 +120,14 @@ namespace Rentrey.Maui
         }
 
         public string LastUpdated { get; set; }
-        public string RankText { get; set; }
+        // ⭐ Backing field for RankText property.
+        private string _rankText;
+        public string RankText
+        {
+            get => _rankText;
+            // ⭐ ENSURED OnPropertyChanged is called when RankText is set.
+            set { if (_rankText != value) { _rankText = value; OnPropertyChanged(nameof(RankText)); } }
+        }
         public string PointsAwayText { get; set; }
 
         public ObservableCollection<PointEntry> RecentPoints { get; set; }
@@ -149,7 +156,6 @@ namespace Rentrey.Maui
 
             ProfileImageSource = "profilepicture.png";
             LastUpdated = "Last Updated: 02/08/25";
-            RankText = "Rank: Bronze";
 
             this.BindingContext = this;
         }
@@ -162,7 +168,7 @@ namespace Rentrey.Maui
             _ = GetUserLocationAsync();
         }
 
-        // ⭐ REFACTORED: Method to calculate rank, colors, and progress ratio
+        // ⭐ Updated Rank Logic
         private void LoadUserData()
         {
             // Default ID 0 should fail to find a user, prompting login/creation
@@ -174,52 +180,88 @@ namespace Rentrey.Maui
             // --- Rank Logic ---
             const int rankThreshold = 1000;
             string currentRank;
-            string nextRank;
             int pointsBase;
 
-            if (userPoints >= 3000) // Platinum (3000+)
+            // Legendary Rank: 6000+ points (MAX RANK)
+            if (userPoints >= 6000)
             {
-                currentRank = "Platinum";
-                nextRank = "MAX";
-                pointsBase = 3000;
-                RankColor = Color.FromHex("#7E2FDE"); // Purple
+                currentRank = "Legendary";
+                pointsBase = 6000;
+                RankColor = Color.FromHex("#FF8C00"); // Dark Orange/Crimson to represent glow
                 ProgressRatio = 1.0;
-                PointsAwayText = "You have reached the maximum rank!";
+                PointsAwayText = "MAX RANK ACHIEVED!";
             }
-            else if (userPoints >= 2000) // Gold (2000-2999)
+            // Crimson Rank: 5000 - 5999 points
+            else if (userPoints >= 5000)
+            {
+                currentRank = "Crimson";
+                pointsBase = 5000;
+                RankColor = Color.FromHex("#DC143C"); // Crimson Red
+                ProgressRatio = (double)(userPoints - pointsBase) / rankThreshold;
+                PointsAwayText = $"{rankThreshold - (userPoints - pointsBase)} points away from Legendary!";
+            }
+            // Emerald Rank: 4000 - 4999 points
+            else if (userPoints >= 4000)
+            {
+                currentRank = "Emerald";
+                pointsBase = 4000;
+                RankColor = Color.FromHex("#50C878"); // Emerald Green
+                ProgressRatio = (double)(userPoints - pointsBase) / rankThreshold;
+                PointsAwayText = $"{rankThreshold - (userPoints - pointsBase)} points away from Crimson!";
+            }
+            // Diamond Rank: 3000 - 3999 points
+            else if (userPoints >= 3000)
+            {
+                currentRank = "Diamond";
+                pointsBase = 3000;
+                RankColor = Color.FromHex("#00BFFF"); // Deep Sky Blue
+                ProgressRatio = (double)(userPoints - pointsBase) / rankThreshold;
+                PointsAwayText = $"{rankThreshold - (userPoints - pointsBase)} points away from Emerald!";
+            }
+            // Gold Rank: 2000 - 2999 points
+            else if (userPoints >= 2000)
             {
                 currentRank = "Gold";
-                nextRank = "Platinum";
                 pointsBase = 2000;
                 RankColor = Color.FromHex("#FFD700"); // Gold
                 ProgressRatio = (double)(userPoints - pointsBase) / rankThreshold;
-                PointsAwayText = $"{rankThreshold - (userPoints - pointsBase)} points away from {nextRank}!";
+                PointsAwayText = $"{rankThreshold - (userPoints - pointsBase)} points away from Diamond!";
             }
-            else if (userPoints >= 1000) // Silver (1000-1999)
+            // Silver Rank: 1000 - 1999 points
+            else if (userPoints >= 1000)
             {
                 currentRank = "Silver";
-                nextRank = "Gold";
                 pointsBase = 1000;
                 RankColor = Color.FromHex("#C0C0C0"); // Silver
                 ProgressRatio = (double)(userPoints - pointsBase) / rankThreshold;
-                PointsAwayText = $"{rankThreshold - (userPoints - pointsBase)} points away from {nextRank}!";
+                PointsAwayText = $"{rankThreshold - (userPoints - pointsBase)} points away from Gold!";
             }
-            else // Bronze (0-999)
+            // Bronze Rank: 0 - 999 points
+            else
             {
                 currentRank = "Bronze";
-                nextRank = "Silver";
                 pointsBase = 0;
                 RankColor = Color.FromHex("#CD7F32"); // Bronze
                 ProgressRatio = (double)userPoints / rankThreshold;
-                PointsAwayText = $"{rankThreshold - userPoints} points away from {nextRank}!";
+                PointsAwayText = $"{rankThreshold - userPoints} points away from Silver!";
             }
 
             // --- Update Bound Properties ---
             UserName = userName;
+            // Display points relative to the end of the current threshold
             Points = $"{userPoints} / {pointsBase + rankThreshold} Points";
             RankText = $"Rank: {currentRank}";
         }
+        private async void OnLogoutClicked(object sender, EventArgs e)
+        {
+            // 1. Clear user data from Preferences
+            Preferences.Remove("LoggedInUserId");
+            Preferences.Remove("UserName");
+            Preferences.Remove("UserPoints");
 
+            // 2. ⭐ FIXED: Navigate to the root of the HomeTab route
+            await Shell.Current.GoToAsync("//HomeTab"); // Use the explicit Tab route defined above
+        }
 
         // Method to add 100 points
         private async void OnAddPointsClicked(object sender, EventArgs e)

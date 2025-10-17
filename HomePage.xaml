@@ -12,6 +12,7 @@
 
     <Grid RowDefinitions="Auto, *">
 
+
         <ScrollView Grid.Row="0" Grid.RowSpan="2">
             <VerticalStackLayout Spacing="20" Padding="25, 
  20, 25, 20">
@@ -24,175 +25,216 @@
                            CornerRadius="30"
                            HeightRequest="60"
                            WidthRequest="60"
+                   
                            BorderColor="#FFD700"
-   
                            BackgroundColor="#FFF8DC"
                            HorizontalOptions="Center"
                            VerticalOptions="Center"
-                      
+        
                            IsClippedToBounds="True"
                            Padding="0"
                            IsVisible="{Binding IsUserLoggedIn}">
+
                         <Frame.GestureRecognizers>
                             <TapGestureRecognizer Tapped="LoadImage"/>
 
                         </Frame.GestureRecognizers>
                         <Image Source="{Binding ProfileImageSource}"
+ 
                                Aspect="AspectFill"/>
                     </Frame>
 
 
                     <VerticalStackLayout x:Name="ProfileInfoStack"
-                                         Grid.Column="1"
+                             
+                            Grid.Column="1"
                                          VerticalOptions="Center"
            
-                                         Spacing="4"
+                                    
+                            Spacing="4"
                                          Margin="15,0,0,0"
                                          IsVisible="{Binding IsUserLoggedIn}">
+
                         <Label Text="{Binding UserName}"
    
                                FontSize="20"
                                FontAttributes="Bold"
-                               TextColor="#333333"
+                     
+                            TextColor="#333333"
           
                                SemanticProperties.HeadingLevel="Level2"/>
                         <Label Text="{Binding Points}"
-                               FontSize="16"
+                       
+                            FontSize="16"
                       
                                FontAttributes="Bold"
                                TextColor="{Binding RankColor}"
-                               SemanticProperties.Description="{Binding Points, StringFormat='You have {0} points.'}"/>
+       
+                            SemanticProperties.Description="{Binding Points, StringFormat='You have {0} points.'}"/>
 
                         <BoxView HeightRequest="8"
                                  BackgroundColor="#E0E0E0"
-                                 CornerRadius="4"
+             
+                            CornerRadius="4"
                                 
                                  HorizontalOptions="FillAndExpand">
+
                             <BoxView.Background>
                                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
                                     <GradientStop 
+                
                                         Color="{Binding RankColor}" Offset="{Binding ProgressRatio}" />
                                     <GradientStop Color="#D3D3D3" Offset="{Binding ProgressRatio}" />
+
                                 </LinearGradientBrush>
 
                             </BoxView.Background>
                         </BoxView>
                         <Label Text="{Binding LastUpdated}" FontSize="12" TextColor="#888888" SemanticProperties.Hint="Last updated date."/>
+
                     </VerticalStackLayout>
 
                     <Button 
                         x:Name="CreateAccountButton"
-                        Text="Create Account"
-                        Grid.Column="1"
+                        Text="Log In" Grid.Column="1"
+   
                         Grid.ColumnSpan="2"
                
                         BackgroundColor="#FFA726"
                         TextColor="White"
+                
                         CornerRadius="8"
                         FontAttributes="Bold"
    
                         HeightRequest="45"
                         HorizontalOptions="Fill"
+                 
                         VerticalOptions="Center"
                    
-                        Clicked="OnCreateAccountClicked"
-                        IsVisible="{Binding IsUserLoggedIn, Converter={StaticResource InverseBooleanConverter}}"/>
+                        Clicked="OnLoginClicked" IsVisible="{Binding IsUserLoggedIn, Converter={StaticResource InverseBooleanConverter}}"/>
                 </Grid>
+
 
                 <VerticalStackLayout Spacing="20" IsVisible="{Binding IsUserLoggedIn}">
                     <Label Text="Recent Updates"
                            FontSize="22"
                            FontAttributes="Bold"
-                           TextColor="#333333"
+            
+                            TextColor="#333333"
                            Margin="0,0,0,5"
                            SemanticProperties.HeadingLevel="Level2"/>
                     <CollectionView ItemsSource="{Binding RecentUpdates}" HeightRequest="150" SelectionMode="None">
+
                         <CollectionView.ItemsLayout>
                             <LinearItemsLayout Orientation="Vertical" ItemSpacing="8"/>
                         </CollectionView.ItemsLayout>
 
                         <CollectionView.ItemTemplate>
+
                             <DataTemplate>
                                 <Frame CornerRadius="10"
                                        Padding="15"
-                                       BackgroundColor="White"
+     
+                                        BackgroundColor="White"
                                        HasShadow="True"
-                                       Shadow="{OnPlatform Default='2,2,2,LightGray'}">
+                           
+                                    Shadow="{OnPlatform Default='2,2,2,LightGray'}">
                                     <HorizontalStackLayout Spacing="15" VerticalOptions="Center" SemanticProperties.Hint="{Binding Description}">
 
                                         <Image Source="{Binding IconSource}"
-                                               HeightRequest="35"
+     
+                                            HeightRequest="35"
                                                WidthRequest="35"
-                                               VerticalOptions="Center" />
+           
+                                            VerticalOptions="Center" />
                                         <VerticalStackLayout Spacing="2" VerticalOptions="Center">
+
                                             <Label Text="{Binding Title}" FontAttributes="Bold" TextColor="#333333" />
                                             <Label Text="{Binding Description}" TextColor="#666666" />
+
                                         </VerticalStackLayout>
 
                                     </HorizontalStackLayout>
                                 </Frame>
+
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                     </CollectionView>
                 </VerticalStackLayout>
                 <Label Text="Recommended Properties"
-                       FontSize="22"
+          
+                            FontSize="22"
                        FontAttributes="Bold"
                      
                        TextColor="#333333"
-                       Margin="0,15,0,0"
+                    
+                        Margin="0,15,0,0"
                        SemanticProperties.HeadingLevel="Level2"/>
 
                 <CollectionView ItemsSource="{Binding RecommendedProperties}" HeightRequest="300" SelectionMode="None">
                     <CollectionView.ItemsLayout>
 
                         <LinearItemsLayout Orientation="Horizontal" ItemSpacing="20"/>
+
                     </CollectionView.ItemsLayout>
 
                     <CollectionView.EmptyView>
 
                         <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="8">
                             <Image Source="empty_properties.png" HeightRequest="100" WidthRequest="100"/>
+
                             <Label Text="No recommended properties available."
-                                   FontSize="16"
+                            FontSize="16"
                                    TextColor="#888888"
                                    HorizontalOptions="Center"
-                                   SemanticProperties.Hint="Displayed when no properties are available."/>
+                              
+                                    SemanticProperties.Hint="Displayed when no properties are available."/>
                         </VerticalStackLayout>
 
                     </CollectionView.EmptyView>
 
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
+
                             <Frame CornerRadius="15" Padding="0" WidthRequest="250" HasShadow="True" SemanticProperties.Description="{Binding Address}">
 
                                 <Frame.GestureRecognizers>
+
                                     <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type local:HomePage}}, Path=BindingContext.NavigateToPropertyCommand}"
                                           CommandParameter="{Binding 
                                                 .}" />
+
                                 </Frame.GestureRecognizers>
 
                                 <VerticalStackLayout>
 
-                                    <Image Source="{Binding ImageSource}" Aspect="AspectFill" HeightRequest="190" />
+                                    <Image Source="{Binding ImageSource}" 
+                                            Aspect="AspectFill" HeightRequest="190" />
                                     <VerticalStackLayout Padding="15">
                                         <Label Text="{Binding Details}"
                
-                                               HorizontalOptions="Start"
+    
+                                                HorizontalOptions="Start"
                                                FontSize="16"
+          
                                                FontAttributes="Bold"
                       
-                                               SemanticProperties.Description="{Binding Details, StringFormat='{0}'}"/>
+                                         
+                                            SemanticProperties.Description="{Binding Details, StringFormat='{0}'}"/>
                                         <Label Text="{Binding Address}"
                                                HorizontalOptions="Start"
-                
+   
+              
                                                FontSize="18"
-                                               FontAttributes="Bold"
+                                        
+                                            FontAttributes="Bold"
                                                Margin="0,8,0,0" 
                       
-                                               SemanticProperties.Hint="Property address"/>
+                       
+                                                SemanticProperties.Hint="Property address"/>
                                     </VerticalStackLayout>
                                 </VerticalStackLayout>
+
 
                             </Frame>
                         </DataTemplate>
@@ -200,6 +242,7 @@
                 </CollectionView>
 
             </VerticalStackLayout>
+
         </ScrollView>
     </Grid>
 </ContentPage>

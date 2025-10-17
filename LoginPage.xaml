@@ -17,33 +17,37 @@
                        FontAttributes="Bold"
                        VerticalOptions="Center" />
             </HorizontalStackLayout>
-            <Label Text="First Name" />
-            <Entry x:Name="FirstNameEntry"
-                   Placeholder="John" />
-            <Label Text="Last Name" />
-            <Entry x:Name="LastNameEntry"
-                   Placeholder="Smith" />
-            <Label Text="Address" />
-            <Entry x:Name="AddressEntry"
-                   Placeholder="Search for an Address" />
-            <Label Text="State" />
-            <Picker x:Name="StatePicker"
-                    ItemsSource="{Binding StatesList}"
-                    SelectedItem="{Binding State}"
-                    Title="Select a State" />
-            <Label Text="Tax File Number" />
-            <Entry x:Name="TaxFileNumberEntry"
-                   Placeholder="TFN" />
 
-            <Button Text="Create Account"
-                    BackgroundColor="#FFC107"
-                    TextColor="Black"
+            <Label Text="Email" />
+            <Entry x:Name="EmailEntry"
+                   Placeholder="you@example.com"
+                   Keyboard="Email" />
+
+            <Label Text="Password" />
+            <Entry x:Name="PasswordEntry"
+                   Placeholder="Password"
+                   IsPassword="True" />
+
+            <!-- Login Button -->
+            <Button Text="Log In"
+                    x:Name="LoginButton"
+                    BackgroundColor="#4CAF50"
+                    TextColor="White"
                     CornerRadius="10"
                     FontSize="20"
                     FontAttributes="Bold"
-                    Clicked="OnCreateAccountClicked"
-                    Margin="0,20,0,0"/>
+                    Clicked="OnLoginClicked"
+                    Margin="0,20,0,10"/>
+
+            <!-- Create Account Button -->
+            <Button Text="Create Account"
+                    BackgroundColor="Transparent"
+                    TextColor="#007BFF"
+                    CornerRadius="10"
+                    FontAttributes="Bold"
+                    Clicked="OnNavigateToCreateAccountClicked"
+                    Margin="0,-10,0,0"/>
+
         </VerticalStackLayout>
     </ScrollView>
-
 </ContentPage>
