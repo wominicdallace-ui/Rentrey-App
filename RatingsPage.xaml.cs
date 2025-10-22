@@ -10,14 +10,14 @@ using Microsoft.Maui.Storage;
 using Microsoft.Maui.Devices.Sensors;
 using System.Diagnostics;
 using System;
-using System.Windows.Input; // ⭐ ADDED for ICommand
+using System.Windows.Input;
 using RentreyApp.Services;
 using Rentrey;
 using System.Linq;
 
 namespace Rentrey.Maui
 {
-    // RatioConverter and other Data Models (PointEntry, Badge) are omitted for brevity
+    // PropertyRating, NewReviewViewModel, and other Data Models are omitted for brevity
 
     [SQLite.Table("Ratings")]
     public class PropertyRating : INotifyPropertyChanged
@@ -105,7 +105,6 @@ namespace Rentrey.Maui
             set { _isFullReviewModalVisible = value; OnPropertyChanged(nameof(IsFullReviewModalVisible)); }
         }
 
-        // ⭐ NEW: Command for deleting a rating
         public ICommand DeleteRatingCommand { get; }
         public ICommand ViewRatingCommand { get; }
 
@@ -118,7 +117,6 @@ namespace Rentrey.Maui
             Ratings = new ObservableCollection<PropertyRating>();
             NewReviewData = new NewReviewViewModel();
 
-            // ⭐ Initialize Commands
             DeleteRatingCommand = new Command<PropertyRating>(async (item) => await OnDeleteRatingClicked(item));
             ViewRatingCommand = new Command<PropertyRating>(OnRatingItemTapped);
 
@@ -158,7 +156,6 @@ namespace Rentrey.Maui
             }
         }
 
-        // ⭐ NEW: Logic to handle the delete button click
         private async Task OnDeleteRatingClicked(PropertyRating rating)
         {
             if (rating == null)
@@ -208,9 +205,19 @@ namespace Rentrey.Maui
                 return;
             }
 
+            // Check if user is logged in
+            int userId = Preferences.Get("LoggedInUserId", 0);
+            if (userId <= 0)
+            {
+                await DisplayAlert("Error", "You must be logged in to submit a review.", "OK");
+                return;
+            }
+
             // Get reviewer details
             string userName = Preferences.Get("UserName", "Guest User");
+            const int reviewPointsReward = 50; // ⭐ Reward amount
 
+            // --- 1. Save Rating ---
             var newRating = new PropertyRating
             {
                 PropertyAddress = NewReviewData.SelectedProperty.Address,
@@ -219,11 +226,28 @@ namespace Rentrey.Maui
                 Review = NewReviewData.ReviewText,
                 ReviewDate = DateTime.Now
             };
-
             await _databaseService.SaveRatingAsync(newRating);
-            await LoadRatings(); // Refresh the list
+
+            // --- 2. Reward User ---
+            var user = await _databaseService.GetUserByIdAsync(userId);
+            if (user != null)
+            {
+                user.Points += reviewPointsReward;
+                await _databaseService.SaveUserAsync(user);
+
+                // Update session data
+                Preferences.Set("UserPoints", user.Points);
+
+                // ⭐ Send message to AccountPage to update Recent Points and Score
+                MessagingCenter.Send(this, "ApplicationSubmitted", // Reusing the message key for consistency
+                    new PointEntry { Points = reviewPointsReward, Description = "You earned 50 points for submitting a review!" });
+            }
+
+            // --- 3. Refresh UI and Close Modal ---
+            await LoadRatings(); // Refresh the list of displayed ratings
 
             IsReviewModalVisible = false;
+            await DisplayAlert("Review Submitted", $"Thank you for your feedback! (+{reviewPointsReward} points)", "OK");
         }
 
         private void OnCancelReviewClicked(object sender, EventArgs e)

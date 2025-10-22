@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Rentrey.Maui.CreateAccountPage"
@@ -7,13 +8,15 @@
     <ScrollView>
         <VerticalStackLayout Spacing="15" Padding="30">
             <Label Text="New Account Registration"
-                   FontSize="24"
+                 
+                FontSize="24"
                    FontAttributes="Bold"
                    HorizontalOptions="Center"
                    Margin="0, 10, 0, 10"/>
 
             <Label Text="First Name" />
             <Entry x:Name="FirstNameEntry" Placeholder="John" />
+
 
             <Label Text="Last Name" />
             <Entry x:Name="LastNameEntry" Placeholder="Smith" />
@@ -25,6 +28,7 @@
             <Entry x:Name="PhoneNumberEntry" Placeholder="04xx xxx xxx" Keyboard="Telephone" />
 
             <Label Text="Password" />
+
             <Entry x:Name="PasswordEntry" Placeholder="Must be at least 6 characters" IsPassword="True" />
 
             <Label Text="Confirm Password" />
@@ -34,23 +38,34 @@
             <Entry x:Name="AddressEntry" Placeholder="Search for an Address" />
 
             <Label Text="State" />
+
             <Picker x:Name="StatePicker"
                     ItemsSource="{Binding StatesList}"
                     SelectedItem="{Binding State}"
                     Title="Select a State" />
 
             <Label Text="Tax File Number" />
+
             <Entry x:Name="TaxFileNumberEntry" Placeholder="TFN" />
 
-            <Button Text="Register &amp; Log In"
+            <Button Text="Register &amp;
+Log In"
                     BackgroundColor="#4CAF50"
                     TextColor="White"
                     CornerRadius="10"
                     FontSize="20"
+                   
                     FontAttributes="Bold"
                     Clicked="OnCreateAccountClicked"
                     Margin="0, 30, 0, 10"/>
 
+            <Button Text="Already have an account? Log In"
+                    BackgroundColor="Transparent"
+                    TextColor="#007BFF"
+                    FontSize="14"
+                    Clicked="OnNavigateToLoginClicked"
+                    HorizontalOptions="Center"
+                    Margin="0, -10, 0, 0"/>
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

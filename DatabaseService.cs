@@ -50,7 +50,8 @@ namespace RentreyApp.Services
                             Longitude = 151.35753124645237,
                             MinimumRating = 1000,
                             PreferredRating = 2000,
-                            ScrapedAt = new DateTime(2025, 9, 20)
+                            ScrapedAt = new DateTime(2025, 9, 20),
+                            IsUserAdded = false
                         },
                         new Property {
                             ListingId = "2072679238",
@@ -62,7 +63,8 @@ namespace RentreyApp.Services
                             Longitude = 151.54706085009724,
                             MinimumRating = 500,
                             PreferredRating = 1000,
-                            ScrapedAt = new DateTime(2025, 9, 21)
+                            ScrapedAt = new DateTime(2025, 9, 21),
+                            IsUserAdded = false
                         },
                         new Property {
                             ListingId = "2059101425",
@@ -74,7 +76,8 @@ namespace RentreyApp.Services
                             Longitude = 151.44528761024011,
                             MinimumRating = 1500,
                             PreferredRating = 2500,
-                            ScrapedAt = new DateTime(2025, 9, 22)
+                            ScrapedAt = new DateTime(2025, 9, 22),
+                            IsUserAdded = false
                         },
                         new Property {
                             ListingId = "11026045",
@@ -86,7 +89,8 @@ namespace RentreyApp.Services
                             Longitude = 152.86058891172047,
                             MinimumRating = 750,
                             PreferredRating = 1500,
-                            ScrapedAt = new DateTime(2025, 9, 23)
+                            ScrapedAt = new DateTime(2025, 9, 23),
+                            IsUserAdded = false
                         },
                         new Property {
                             ListingId = "448967054",
@@ -98,7 +102,8 @@ namespace RentreyApp.Services
                             Longitude = 151.4126676709335,
                             MinimumRating = 1000,
                             PreferredRating = 2000,
-                            ScrapedAt = new DateTime(2025, 9, 24)
+                            ScrapedAt = new DateTime(2025, 9, 24),
+                            IsUserAdded = false
                         },
                         new Property {
                             ListingId = "338575355",
@@ -110,7 +115,8 @@ namespace RentreyApp.Services
                             Longitude = 151.35446442953696,
                             MinimumRating = 1250,
                             PreferredRating = 2250,
-                            ScrapedAt = new DateTime(2025, 9, 25)
+                            ScrapedAt = new DateTime(2025, 9, 25),
+                            IsUserAdded = false
                         },
                         new Property {
                             ListingId = "63471549",
@@ -122,7 +128,8 @@ namespace RentreyApp.Services
                             Longitude = 151.47099685322402,
                             MinimumRating = 500,
                             PreferredRating = 1500,
-                            ScrapedAt = new DateTime(2025, 9, 26)
+                            ScrapedAt = new DateTime(2025, 9, 26),
+                            IsUserAdded = false
                         },
                         new Property {
                             ListingId = "p11026047",
@@ -134,7 +141,8 @@ namespace RentreyApp.Services
                             Longitude = 151.44661759984368,
                             MinimumRating = 1000,
                             PreferredRating = 2000,
-                            ScrapedAt = new DateTime(2025, 9, 27)
+                            ScrapedAt = new DateTime(2025, 9, 27),
+                            IsUserAdded = false
                         },
                         new Property {
                             ListingId = "333814282",
@@ -146,7 +154,8 @@ namespace RentreyApp.Services
                             Longitude = 151.43295651759433,
                             MinimumRating = 750,
                             PreferredRating = 1750,
-                            ScrapedAt = new DateTime(2025, 9, 28)
+                            ScrapedAt = new DateTime(2025, 9, 28),
+                            IsUserAdded = false
                         },
                         new Property {
                             ListingId = "11026032",
@@ -158,7 +167,8 @@ namespace RentreyApp.Services
                             Longitude = 151.6305670996335,
                             MinimumRating = 1500,
                             PreferredRating = 2500,
-                            ScrapedAt = new DateTime(2025, 9, 29)
+                            ScrapedAt = new DateTime(2025, 9, 29),
+                            IsUserAdded = false
                         }
                     };
 
@@ -183,7 +193,7 @@ namespace RentreyApp.Services
 
         #region User Methods
 
-        // ⭐ ADDED: Get user by Email for authentication
+        // Get user by Email for authentication
         public Task<RentreyApp.Models.User> GetUserByEmailAsync(string email)
         {
             return _database.Table<RentreyApp.Models.User>()

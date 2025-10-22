@@ -50,6 +50,18 @@
      Shell.NavBarIsVisible="True" />
 
     <ShellContent
+     Title="Add New Property"
+     ContentTemplate="{DataTemplate local:AddPropertyPage}"
+     Route="AddPropertyPageRoute"
+     Shell.NavBarIsVisible="True" />
+
+    <ShellContent
+     Title="Select Location"
+     ContentTemplate="{DataTemplate local:MapSelectionPage}"
+     Route="MapSelectionPage"
+     Shell.NavBarIsVisible="True" />
+
+    <ShellContent
         Title="Tenancy Application"
         ContentTemplate="{DataTemplate local:TenancyApplicationPage}"
         Route="TenancyApplicationPage" />

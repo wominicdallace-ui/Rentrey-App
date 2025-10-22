@@ -51,6 +51,7 @@ namespace Rentrey.Maui
     {
         private readonly DatabaseService _databaseService;
 
+        // ⭐ FIXED: ProfileImageSource definition restored
         private string _profileImageSource;
         public string ProfileImageSource
         {
@@ -65,6 +66,7 @@ namespace Rentrey.Maui
             }
         }
 
+        // ⭐ FIXED: UserLocation definition restored
         private string _userLocation;
         public string UserLocation
         {
@@ -95,7 +97,6 @@ namespace Rentrey.Maui
             set { if (_points != value) { _points = value; OnPropertyChanged(nameof(Points)); } }
         }
 
-        // ⭐ Color to be used for Points text and Progress Bar
         private Color _rankColor;
         public Color RankColor
         {
@@ -103,7 +104,6 @@ namespace Rentrey.Maui
             set { if (_rankColor != value) { _rankColor = value; OnPropertyChanged(nameof(RankColor)); } }
         }
 
-        // ⭐ Text indicating the next rank goal
         private string _nextRankText;
         public string NextRankText
         {
@@ -120,12 +120,10 @@ namespace Rentrey.Maui
         }
 
         public string LastUpdated { get; set; }
-        // ⭐ Backing field for RankText property.
         private string _rankText;
         public string RankText
         {
             get => _rankText;
-            // ⭐ ENSURED OnPropertyChanged is called when RankText is set.
             set { if (_rankText != value) { _rankText = value; OnPropertyChanged(nameof(RankText)); } }
         }
         public string PointsAwayText { get; set; }
@@ -154,10 +152,39 @@ namespace Rentrey.Maui
                 new Badge { IconSource = "badge_new.png", Title = "New User", Description = "Joined the Rentrey community" }
             };
 
+            // Subscribe to Application Submitted message to update points list
+            MessagingCenter.Subscribe<TenancyApplicationPage, PointEntry>(this, "ApplicationSubmitted", (sender, entry) =>
+            {
+                // Run on the main thread to update ObservableCollection/UI
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    // Add the new reward entry
+                    RecentPoints.Insert(0, entry);
+
+                    // Limit the list to 4 items
+                    const int maxRecentItems = 4;
+                    if (RecentPoints.Count > maxRecentItems)
+                    {
+                        RecentPoints.RemoveAt(RecentPoints.Count - 1);
+                    }
+
+                    // Reload User Data to update score/rank display
+                    LoadUserData();
+                });
+            });
+
+
             ProfileImageSource = "profilepicture.png";
             LastUpdated = "Last Updated: 02/08/25";
 
             this.BindingContext = this;
+        }
+
+        // Must unsubscribe when the page is destroyed (optional but good practice)
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+            MessagingCenter.Unsubscribe<TenancyApplicationPage, PointEntry>(this, "ApplicationSubmitted");
         }
 
         // Load data from Preferences when the page appears
@@ -168,7 +195,7 @@ namespace Rentrey.Maui
             _ = GetUserLocationAsync();
         }
 
-        // ⭐ Updated Rank Logic
+        // Updated Rank Logic
         private void LoadUserData()
         {
             // Default ID 0 should fail to find a user, prompting login/creation
@@ -187,7 +214,7 @@ namespace Rentrey.Maui
             {
                 currentRank = "Legendary";
                 pointsBase = 6000;
-                RankColor = Color.FromHex("#FF8C00"); // Dark Orange/Crimson to represent glow
+                RankColor = Color.FromHex("#FF8C00"); // Orange/Crimson glow
                 ProgressRatio = 1.0;
                 PointsAwayText = "MAX RANK ACHIEVED!";
             }
@@ -248,20 +275,10 @@ namespace Rentrey.Maui
 
             // --- Update Bound Properties ---
             UserName = userName;
-            // Display points relative to the end of the current threshold
             Points = $"{userPoints} / {pointsBase + rankThreshold} Points";
             RankText = $"Rank: {currentRank}";
         }
-        private async void OnLogoutClicked(object sender, EventArgs e)
-        {
-            // 1. Clear user data from Preferences
-            Preferences.Remove("LoggedInUserId");
-            Preferences.Remove("UserName");
-            Preferences.Remove("UserPoints");
 
-            // 2. ⭐ FIXED: Navigate to the root of the HomeTab route
-            await Shell.Current.GoToAsync("//HomeTab"); // Use the explicit Tab route defined above
-        }
 
         // Method to add 100 points
         private async void OnAddPointsClicked(object sender, EventArgs e)
@@ -276,7 +293,8 @@ namespace Rentrey.Maui
 
             if (user != null)
             {
-                user.Points += 100;
+                const int testPoints = 100;
+                user.Points += testPoints;
                 await _databaseService.SaveUserAsync(user);
 
                 // 1. Update Preferences immediately
@@ -288,7 +306,7 @@ namespace Rentrey.Maui
                 // 3. Add new entry to recent points (MOST RECENT is inserted at index 0)
                 RecentPoints.Insert(0, new PointEntry
                 {
-                    Points = 100,
+                    Points = testPoints,
                     Description = "Test points added via button."
                 });
 
@@ -305,6 +323,17 @@ namespace Rentrey.Maui
             {
                 await DisplayAlert("Error", "User record not found in database.", "OK");
             }
+        }
+
+        private async void OnLogoutClicked(object sender, EventArgs e)
+        {
+            // 1. Clear user data from Preferences
+            Preferences.Remove("LoggedInUserId");
+            Preferences.Remove("UserName");
+            Preferences.Remove("UserPoints");
+
+            // 2. Navigate to the guest-facing Home Page
+            await Shell.Current.GoToAsync("//HomeTab");
         }
 
         private async Task<PermissionStatus> GetPermissionAsync<T>() where T : Permissions.BasePermission, new()

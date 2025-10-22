@@ -1,3 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:maps="clr-namespace:Microsoft.Maui.Controls.Maps;assembly=Microsoft.Maui.Controls.Maps"
@@ -6,34 +7,72 @@
              x:Name="MapPageRoot"
              Title="Search on Map">
 
+    <Grid RowDefinitions="Auto, Auto, *">
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="300"/>
-            <!-- Map takes top -->
-            <RowDefinition Height="*"/>
-            <!-- Property list scrolls below -->
-        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" ColumnDefinitions="*, Auto" Padding="15, 10, 15, 0">
+            <Label Text="Search on Map"
+                   Grid.Column="0"
+                   FontSize="24"
+                   FontAttributes="Bold"
+                   VerticalOptions="Center" />
 
-        <!-- Map -->
-        <maps:Map x:Name="PropertyMap"
-                  Grid.Row="0"
-                  IsShowingUser="True"
-                  MapClicked="OnMapClicked" />
+            <ImageButton Source="plus.svg" 
+                         Grid.Column="1"
+                         HeightRequest="30"
+                         WidthRequest="30"
+                         BackgroundColor="Transparent"
+                         Aspect="AspectFit"
+                         VerticalOptions="Center"
+                         Clicked="OnAddPropertyClicked"/>
+        </Grid>
+        <SearchBar Grid.Row="1"
+                   Placeholder="Search by address..."
+                   SearchCommand="{Binding SearchCommand}"
+                   Text="{Binding SearchText}"
+                   Margin="15,0,15,10"/>
 
-        <!-- Popup overlay -->
+        <Grid Grid.Row="2" RowDefinitions="300, *">
+            <maps:Map x:Name="PropertyMap"
+                      Grid.Row="0" 
+                      IsShowingUser="True"
+                      MapClicked="OnMapClicked" />
+
+            <CollectionView Grid.Row="1"
+                            ItemsSource="{Binding Properties}"
+                            Margin="15,10,15,15">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame CornerRadius="10" Padding="10" Margin="0,5" BackgroundColor="White" HasShadow="True">
+                            <Frame.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    Command="{Binding Source={x:Reference MapPageRoot}, Path=PropertyTappedCommand}"
+                                    CommandParameter="{Binding .}" />
+                            </Frame.GestureRecognizers>
+                            <HorizontalStackLayout Spacing="10">
+                                <Image Source="{Binding ImageSource}" HeightRequest="80" WidthRequest="120" Aspect="AspectFill"/>
+                                <VerticalStackLayout>
+                                    <Label Text="{Binding Address}" FontAttributes="Bold" FontSize="16" />
+                                    <Label Text="{Binding Details}" FontSize="14" TextColor="Gray"/>
+                                    <Label Text="{Binding Price, StringFormat='${0} p/w'}" FontAttributes="Bold" TextColor="#FFA726" />
+                                </VerticalStackLayout>
+                            </HorizontalStackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Grid>
+
         <BoxView x:Name="PopupOverlay"
                  BackgroundColor="#80000000"
                  IsVisible="False"
                  Opacity="0"
                  InputTransparent="False"
-                 Grid.RowSpan="2">
+                 Grid.Row="0" Grid.RowSpan="3">
             <BoxView.GestureRecognizers>
                 <TapGestureRecognizer Tapped="OnOverlayTapped" />
             </BoxView.GestureRecognizers>
         </BoxView>
 
-        <!-- Popup Card -->
         <Frame x:Name="PopupCard"
                BackgroundColor="White"
                CornerRadius="15"
@@ -41,7 +80,8 @@
                IsVisible="False"
                Padding="10"
                VerticalOptions="End"
-               Margin="15">
+               Margin="15"
+               Grid.Row="0" Grid.RowSpan="3">
             <Frame.GestureRecognizers>
                 <PanGestureRecognizer PanUpdated="OnPopupPanUpdated"/>
             </Frame.GestureRecognizers>
@@ -59,38 +99,5 @@
                         Margin="0,5,0,0"/>
             </VerticalStackLayout>
         </Frame>
-
-        <!-- Search bar above property list -->
-        <SearchBar Grid.Row="1"
-                   Placeholder="Search by address..."
-                   SearchCommand="{Binding SearchCommand}"
-                   Text="{Binding SearchText}"
-                   Margin="15,10,15,0"/>
-
-        <!-- Property list below map -->
-        <CollectionView Grid.Row="1"
-                ItemsSource="{Binding Properties}"
-                Margin="15,60,15,15">
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <Frame CornerRadius="10" Padding="10" Margin="0,5" BackgroundColor="White" HasShadow="True">
-                        <Frame.GestureRecognizers>
-                            <TapGestureRecognizer
-                                Command="{Binding Source={x:Reference MapPageRoot}, Path=PropertyTappedCommand}"
-                                CommandParameter="{Binding .}" />
-                        </Frame.GestureRecognizers>
-                        <HorizontalStackLayout Spacing="10">
-                            <Image Source="{Binding ImageSource}" HeightRequest="80" WidthRequest="120" Aspect="AspectFill"/>
-                            <VerticalStackLayout>
-                                <Label Text="{Binding Address}" FontAttributes="Bold" FontSize="16" />
-                                <Label Text="{Binding Details}" FontSize="14" TextColor="Gray"/>
-                                <Label Text="{Binding Price, StringFormat='${0} p/w'}" FontAttributes="Bold" TextColor="#FFA726"/>
-                            </VerticalStackLayout>
-                        </HorizontalStackLayout>
-                    </Frame>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
-
     </Grid>
 </ContentPage>

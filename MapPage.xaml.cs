@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using RentreyApp.Services;
 using System.Collections.Generic;
 using System.Windows.Input;
+using System; // Added for Uri usage in ShowPopup
 
 namespace Rentrey.Maui
 {
@@ -49,6 +50,12 @@ namespace Rentrey.Maui
             PropertyTappedCommand = new Command<Property>(OnPropertyTapped);
 
             LoadProperties();
+        }
+
+        // ⭐ FIXED: Event handler now uses the correct route name from AppShell.xaml
+        private async void OnAddPropertyClicked(object sender, EventArgs e)
+        {
+            await Shell.Current.GoToAsync("///AddPropertyPageRoute");
         }
 
         private async void LoadProperties()
@@ -119,14 +126,15 @@ namespace Rentrey.Maui
         {
             _selectedPinProperty = property;
 
+            // These UI elements must be defined in MapPage.xaml
             PopupAddress.Text = property.Address;
             PopupDetails.Text = property.Details;
             PopupPrice.Text = $"${property.Price} p/w";
 
             if (!string.IsNullOrEmpty(property.ImageSource))
                 PopupImage.Source = property.ImageSource.StartsWith("http")
-                                    ? ImageSource.FromUri(new Uri(property.ImageSource))
-                                    : ImageSource.FromFile(property.ImageSource);
+                                     ? ImageSource.FromUri(new Uri(property.ImageSource))
+                                     : ImageSource.FromFile(property.ImageSource);
             else
                 PopupImage.Source = "placeholder_house.png";
 

@@ -1,4 +1,4 @@
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Maui.Controls;
 using Microsoft.Maui.Storage;
 using RentreyApp.Models;
@@ -96,6 +96,13 @@ namespace Rentrey.Maui
                 Debug.WriteLine($"Error during registration: {ex.Message}");
                 await DisplayAlert("Error", "Registration failed due to a database error. Please try again.", "OK");
             }
+        }
+
+        // ⭐ NEW: Navigation handler to go back to the LoginPage
+        private async void OnNavigateToLoginClicked(object sender, EventArgs e)
+        {
+            // Navigate to the root login page, replacing the current stack
+            await Shell.Current.GoToAsync("///LoginPageRoute");
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

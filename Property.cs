@@ -1,4 +1,4 @@
-using SQLite;
+﻿using SQLite;
 using System;
 
 namespace Rentrey;
@@ -19,4 +19,5 @@ public class Property
     public int MinimumRating { get; set; }
     public int PreferredRating { get; set; }
     public DateTime ScrapedAt { get; set; }
+    public bool IsUserAdded { get; set; } = false;
 }

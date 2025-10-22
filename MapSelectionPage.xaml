@@ -1,0 +1,37 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:maps="clr-namespace:Microsoft.Maui.Controls.Maps;assembly=Microsoft.Maui.Controls.Maps"
+             x:Class="Rentrey.Maui.MapSelectionPage"
+             Title="Select Property Location">
+
+    <Grid RowDefinitions="*, Auto">
+        
+        <!-- Map for Pin Placement -->
+        <maps:Map x:Name="LocationMap"
+                  Grid.Row="0"
+                  MapClicked="OnMapClicked"
+                  IsShowingUser="True" />
+        
+        <!-- Selection/Display Bar -->
+        <VerticalStackLayout Grid.Row="1" Spacing="5" Padding="15" BackgroundColor="White"
+                             x:Name="SelectionBar">
+            
+            <Label Text="Tap on the map to select the property location." 
+                   FontSize="14" TextColor="#888888" HorizontalOptions="Center"/>
+            
+            <Label x:Name="CoordinatesLabel" 
+                   Text="No location selected" 
+                   FontAttributes="Bold" HorizontalOptions="Center"/>
+
+            <Button Text="Confirm Location"
+                Clicked="OnConfirmLocationClicked"
+                BackgroundColor="#4CAF50"
+                TextColor="White"
+                CornerRadius="10"
+                Margin="0, 5, 0, 0"
+                IsEnabled="False"
+                x:Name="ConfirmButton"/>    
+
+        </VerticalStackLayout>
+    </Grid>
+</ContentPage>
